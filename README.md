@@ -5,7 +5,7 @@ Telethon Kids Institute R Workshop Resources
 
 ## Slides
 
-Telethon Kids Institute R Workshop slides(.html) can be accessed
+Telethon Kids Institute R Workshop slides(.html) can be downloaded
 directly through the
 [inst/doc](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc)
 directory of this repository.

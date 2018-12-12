@@ -5,6 +5,10 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+## Slides
+
+Telethon Kids Institute R Workshop slides(.html) can be downloaded directly through the [inst/doc](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc) directory of this repository.
+
 ## Installing
 
 Install the Telethon Kids Institute RWorkshop package by copying the following into the R console:
