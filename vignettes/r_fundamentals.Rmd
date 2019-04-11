@@ -1,0 +1,445 @@
+---
+title: "R-Fundamentals"
+subtitle: "Biometrics"
+author: Matt Cooper and Paul Stevenson
+date: August 21, 2018
+output:
+  ioslides_presentation:
+    template: assets/templates/ioslides.html
+    logo: assets/images/logo800.jpg
+    css: assets/css/ioslides.css
+    widescreen: true
+    incremental: false
+vignette: >
+  %\VignetteIndexEntry{Telethon Kids Institute markdown ioslides template}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r init, include = FALSE, echo = FALSE}
+library(biometrics)
+
+```
+
+# R-Fundamentals
+
+## What we will cover
+
+- What R is?
+    + An overview
+    + A very brief history
+    + What R isn't
+- How to get setup with R
+- Must know fundamentals in R
+- Basic commands in R
+    + Installing/loading packages
+    + Reading data in
+    + Import
+- A preview
+- Staying up-to-date in R
+
+# R - What R is
+
+## Overview
+
+<img style="float: right;" src="https://cran.r-project.org/Rlogo.svg" width="150">
+
+R is:
+
+- a statistical programming, computation, and graphics **system**,
+- it's own **language** (code-based programming/commands),
+- a cross platform system (windows, mac, unix-like),
+- freely available online,
+- a modular **system**
+
+## Great, so what is R?
+
+<blockquote class="blockquote">
+  <div class = "large"><p>R is an environment where you can read data in, carry out data manipulation, analyse your data, and prepare your results for others to see.</p></div>
+  <footer class="blockquote-footer">Me. (Today)</footer>
+</blockquote>
+
+## Great, so what is R?
+
+<blockquote class="blockquote">
+  <div class = "large"><p>R is an environment where you can read <font color="red"><b>(pull)</b></font> data in <font color="red"><b>(from a variety of sources)</b></font>, carry out <font color="red"><b>(very complex)</b></font> data manipulation, analyse your data <font color="red"><b>(via a broad an rapidly increasing suite of statistical models)</b></font>, and prepare <font color="red"><b>(reproducibly)</b></font> your results for others to see <font color="red"><b>(produce graphics, complete documents, interactive interfaces)</b></font>.</p></div>
+  <footer class="blockquote-footer">Me. (Today)</footer>
+</blockquote>
+
+## More about R
+
+
+
+## A very brief history
+
+- R first appeared in 1993
+- Originally written by Ross Ihaka and Robert Gentleman (University of Auckland, NZ)
+- Influenced by the existing languages S and Scheme
+- Mid 1997, 'R core team' established to maintain the base code
+- R CRAN (Comprehensive R Archive Network) - a collection of sites (mirrored daily around the world) that manages the distribution of R and it's packages
+- R V1.0 released 2000-02-29 (considered stable enough for production use)
+
+## R more recently
+
+- 200? enter Hadley Wickham
+- Over 10,000 R 'add-on' packages on CRAN
+    - More on github
+- Rstudio initially released in 2011
+- Annual conferences
+    - 
+
+
+## What R isn't?
+
+R is not a:
+
+- designated data collection tool (*?)
+- (permanent) data storage system (*?)
+- 
+
+# Getting started and the building blocks
+
+## We'll cover
+- The RStudio IDE
+- Classes
+- Structures
+- Important Syntax
+
+## But first - Disclaimer
+
+- There are **many ways** to use R
+- There are **many ways** to do **most** operations R
+- This presentation focuses on the collective 'best practice' advice of our team of daily R users
+- Some other ideas are presented/summarised at the end of this presentation
+
+## And - a heads up
+
+- R is a cAsE sensitive language
+- R is largely very forgiving with where white spaces is (or isn't)
+- R is largely very forgiving with 
+
+## RStudio IDE
+
+## Classes
+
+- Each data point, which you can think of as a cell, will have a class.
+- There are many classes, most (and the common ones) are nice and clear.
+- Classes have, somewhat of, a hierarchy [character is King/Queen amongst many]
+- Classes are closely related to Structures (the next topic).
+- Functions will respond differently based on the class of data you feed them.
+
+## Classes - character
+
+<code>character</code> is the highest-level 'catch-all' class
+
+- Free text fields will be of class <code>character</code>
+- Any* data point that has something other than numbers in it will default to being of class <code>character</code>
+
+*data points with non-nuermic (alpha) characters can be made into other classes (more to come) 
+
+## Classes - character
+
+```{r}
+x <- "Teach me R"
+x
+class(x)
+```
+
+- Note the quote marks
+
+## Classes - character
+
+```{r error = T}
+x <- Teach me R
+```
+
+- Note the lack of quote marks
+
+## Classes - character
+
+```{r error = T}
+x <- "Teach me R"
+y <- "Teach me now"
+x + y
+```
+
+## Classes - character
+
+```{r}
+x <- "3"
+class(x)
+```
+
+- Interesting?
+
+## Classes - numeric (integer/double)
+
+- There are three classes that (essentially) can all be thought of as <code>numeric</code>
+    + <code>numeric</code>
+    + <code>double</code> (double precision floating point numbers - computer format)
+    + <code>integer</code> (no decimals)
+- These are all 'numbers', R may convert between the three as it sees fit
+- "it is perfectly feasible to use R successfully for years and not need to know the answer to this question" - stackoverflow
+
+## Classes - numeric (integer/double)
+
+```{r}
+x <- "3"
+x
+class(x)
+```
+
+- Oh, quotes!
+
+## Classes - numeric (integer/double)
+
+```{r}
+x <- 3
+x
+class(x)
+x + 2
+```
+
+## Classes - numeric (integer/double)
+
+```{r}
+x <- as.integer(3.1)
+x
+class(x)
+x + 0.4
+class(x + 0.4)
+```
+- Notice the decimal has dropped off
+
+## Classes - factor
+
+- Class <code>factor</code> is used for variables that have a discrete set of categories (ordered or otherwise)
+- These can be used where labeling is applied to coded variables (1 = "Cat", 2 = "Dog", 3 = "Other")
+- It is **very easy** to trip up with factors
+- But, factors can be very useful! a (necessity)?
+    + Correct handling within models
+
+## Classes - factor
+
+```{r}
+y <- c(Cat, Dog, Other)
+y <- c("Cat", "Dog", "Other", "Dog")
+y
+class(y)
+y <- as.factor(c("Cat", "Dog", "Other", "Dog"))
+y
+class(y)
+levels(y)
+```
+
+- note, the order of the levels
+
+## Classes - logical
+
+
+
+## Classes - factor
+
+```{r}
+y <- as.factor(c("Cat", "Dog", "Other", "Dog", "Dog"))
+table(x)
+y <- y[-1] # get rid of the cat
+table(y)
+y
+y <- as.factor(y)
+levels(y)
+y <- factor(y)
+levels(y)
+
+```
+
+- review <code>?factor</code>
+- note, <code>as.factor()</code> does not accept additional arguments, and see <code>levels</code> defaults.
+
+## Classes - date
+
+
+
+
+## Classes - other
+
+## Structures 
+
+- Structure is our term, it is not an R term
+- Some structures are a <code>class</code> within R
+- But not all 
+
+Single element (scalar typically)
+- most basic building block
+
+```{r}
+i <- 1
+```
+
+## Structures - vector
+
+- at least two elements
+- a <code>vector</code> is not a class
+- a <code>vector</code> HAS a class, and it can have only one! (remember the hierarchy)
+- the power of R, is vectorised processing 
+
+## Structures - vector
+
+```{r}
+x <- c(3,4,5,6,8)
+x
+x + 2
+length(x)
+sum(x)
+y <- c("Cat", "Dog", "Other", "Dog")
+length(y)
+sum(y)
+```
+
+## Structures - data.frame
+
+- likely the main structure you will work with in R
+- best 'pictured' as a table (two-dimensional), with rows and columns
+- best 'thought of' as:
+    - a number of | vertical | vectors
+    - side by side
+    - bound together
+    - all of equal length
+- all elements of a column will be off the same class!
+- reading in a csv, a plain text file, (a worksheet of) an excel file
+    - it will generally become available to you as a <code>data.frame</code>
+
+## Structures - data.frame
+
+- a <code>tibble</code> is functionally very similar to a <code>data.frame</code>
+    - part of the tidyverse
+    - has a "handy" reduced display format
+
+## Structures - data.frame
+
+```{r}
+class(mtcars)
+dim(mtcars)
+head(mtcars) # can you guess what tail does?
+names(mtcars)
+row.names(mtcars)[1:5]
+```
+
+## Structures - data.frame
+
+```{r}
+str(mtcars)
+```
+
+## Structures - data.frame
+
+```{r}
+summary(mtcars[, 1:4])
+```
+
+## Structures - data.frame
+
+```{r}
+head(mtcars)
+mtcars[1:2 , 1:3]
+mtcars[1 , 1]
+```
+
+## Structures - data.frame
+
+```{r}
+mtcars$mpg[1:10]
+mtcars$MyRating <- 1:32
+mtcars$MyRating <- 1:nrow(mtcars)
+head(mtcars)
+```
+
+## Structures - list
+
+- these are complex
+- best 'pictured' as a 3D (deep) (filing cabinet like) structure 
+- each element of the list can have a different class
+- lists can be used to keep related things together rather than as separate objects
+    - if you had a <code>data.frame</code> of data for each calendar
+    - you can apply operations to call calendar years at the same time
+- lists can be good for collecting output (complex elements) from a loop
+    - model output from running a model on multiple imputed datasets
+
+## Structures - other
+
+Matrix
+- 
+
+Array
+
+## Important Syntax
+
+Many of these have been seen during the prior examples:
+- <code><-</code> assign, puts the right hand side into the left hand side
+- <code>?</code> followed by a command, to search for help on a command
+- <code>a:b</code> used to generate a series of integers, from a to b
+- <code></code>
+- <code>function( , , ...)</code> **arguments** to a function are seperated by commas
+- <code>c()</code> concatenate, used to create a vector
+- <code>c()</code> concatenate, used to create a vector
+- <code>[ ] [,] [[ ]]</code> used to 'extract'/interact with componets of a  
+- <code></code>
+- <code></code>
+- <code></code>
+
+()
+[]
+<- c
+
+
+# More to getting started
+
+## Packages (libraries) 
+
+## Reading data in
+
+# Basic commands in R
+# Basic commands in R
+    + Installing/loading packages
+    + Reading data in
+    + Import
+    
+# A preview
+
+
+
+
+
+# Closing
+
+## Staying up-to-date in R
+
+## Other ways to skin a cat
+
+
+##  I'd do this
+
+dgfh
+
+<img style="float: right;" src="https://i0.wp.com/wptavern.com/wp-content/uploads/2016/07/stack-overflow.png?ssl=1" width="150">
+
+gfhfdhg
+
+
+<img style="float: right;" src="https://www.r-bloggers.com/wp-content/uploads/2016/04/R_02_2016-05-01.png" width="150">
+
+
+fhg
+
+
+
+
+
+
+
+
+
+
+
+
+
