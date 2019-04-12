@@ -24,6 +24,7 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 library(tidyverse)
+library(ggpubr)
 data(iris)
 
 ```
@@ -32,11 +33,11 @@ data(iris)
 
 ## What we cover
 
->- Linear Regression
->- Multiple Linear Regression 
->- Logistic Regression
+- Linear Regression
+- Multiple Linear Regression 
+- Logistic Regression
 
-```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, 'class="centre", out.extra=, style="width:, warnings=FALSE}
+```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, out.extra = 'class="centre" style="width: 500px;"', warnings=FALSE}
 setwd("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/")
 tki_demo <- read_csv("data/demo.csv")
 
@@ -58,9 +59,9 @@ ggplot( aes(day2, day3)) +
 
 In a linear regression, we aim to find a model: <br /> 
 
->- that represents our data and 
+- that represents our data and 
 
->- can give information about the association between our variables of interest.
+- can give information about the association between our variables of interest.
 
 The command in R for a linear model is <br />
   
@@ -73,19 +74,19 @@ The Iris data set consists of information about three different species of iris 
 
 It holds information on:
 
->- Sepal length
+- Sepal length
 
->- Sepal width
+- Sepal width
 
->- Petal length
+- Petal length
 
->- Petal width
+- Petal width
 
 ## Data set summary
 Let's first have a look at the summary table of the Iris data set, by using the <code>summary()</code> command:
 
-```{r, echo = FALSE, results='asis',out.extra = 'class="centre" style="width: 500px;"'}
-kable(summary(iris[,c(1:4)]))
+```{r, echo = FALSE, results='asis',out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
+kable(summary(tki_demo[,c(6:8)]))
 ```
 
 #Visualisation of data distributions
@@ -93,38 +94,52 @@ kable(summary(iris[,c(1:4)]))
 Before we start with the linear regression model, we need to get an idea of the underlying data and its distribution.
 We know that the linear regression has the assumtptions:
 
->-
+-
 
 
 ## QQ-plot: 
-```{r, echo=FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+```{r, echo=FALSE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
 library(tidyr)
-data(iris)
-iris_long <- gather(iris, Specification, measurement, Sepal.Length:Petal.Width, factor_key=TRUE)
 
-ggplot(iris_long, aes(sample=measurement, color=Specification))+stat_qq()
+tki_demo %>%
+  filter(day2 < 100) %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
+  ggplot( aes(sample=measurement, color=Days))+stat_qq()
 
 ```
 
 ## Boxplots to check for outliers
 
 
-```{r echo = FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+```{r echo = FALSE, out.extra = 'class="centre" style="width: 700px;"',warning=FALSE}
 
-  
-
-ggplot(iris_long, aes(y=measurement,x=Specification, col=Specification)) +
-  labs(title = "Iris Specifications", x = "", y = "Measurment in cm") +
+with_out <- tki_demo %>%
+  #filter(day2 < 100) %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
+  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  labs(title = "Days: 1 to 3 with outlier", x = "", y = "Measurment") +
   geom_boxplot() +
   scale_color_telethonkids("light") +
   theme_minimal()
+
+no_out <- tki_demo %>%
+  filter(day2 < 100) %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
+  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  labs(title = "Days: 1 to 3 outlier removed", x = "", y = "Measurment") +
+  geom_boxplot() +
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+
+ggarrange(with_out, no_out, ncol=2, common.legend = TRUE, legend=FALSE )
 
 ```
 
 
 ## Plot the variables
 
-```{r, echo = FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+```{r, echo = FALSE, out.extra = 'class="centre" style="width: 700px;"',warning=FALSE}
 data(iris)
 plot1 <- ggplot(iris, aes(Petal.Width, Petal.Length)) +
   labs(title = "Petal", x = "Petal Width", y = "Petal Length") +
@@ -164,11 +179,11 @@ Let's now perform a linear regression model in R.
 
 <code>lm(Petal.Length~Petal.Width, data=iris)</code>
 
->- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>Petal.Length</em>**.
+- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>Petal.Length</em>**.
 
->- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>Petal.Width</em>**.
+- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>Petal.Width</em>**.
 
->- We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
+- We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
 
 ##Linear Regression Results
 Now we want to look at the results of the linear regression. So how do we get the <em>p-value</em> and <em>\(\beta\)-coefficient</em> for the association?
