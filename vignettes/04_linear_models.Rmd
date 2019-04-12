@@ -1,0 +1,231 @@
+---
+title: "RStudio Workshop"
+subtitle: "Linear Regression"
+author: Sebastian Rauschert
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  ioslides_presentation:
+    template: assets/templates/ioslides.html
+    logo: assets/images/logo800.jpg
+    css: assets/css/ioslides.css
+    widescreen: true
+    incremental: true
+vignette: >
+  %\VignetteIndexEntry{Telethon Kids Institute markdown ioslides template}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r init, include = FALSE, echo = FALSE}
+library(biometrics)
+library(datasets)
+library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+
+data(iris)
+
+```
+
+# Statistical Modelling in R
+
+## What we cover
+
+>- Linear Regression
+>- Multiple Linear Regression 
+>- Logistic Regression
+
+```{r, echo = FALSE, out.extra = 'class="centre" style="width: 500px;"'}
+data(iris)
+ggplot(iris, aes(Petal.Width, Petal.Length)) +
+  labs(title = "Iris Dataset", x = "Petal Width", y = "Petal Length") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+```
+
+# Linear Regression
+##Linear Regression in R
+
+In a linear regression, we aim to find a model: <br /> 
+
+>- that represents our data and 
+
+>- can give information about the association between our variables of interest.
+
+The command in R for a linear model is <br />
+  
+  <code>lm(y~x)</code>.
+
+**y** is the outcome variable that interests us and **x** is the variable that we want to test in its association with **y**
+
+## Example: the iris data set
+The Iris data set consists of information about three different species of iris flowers, namely **<em>setosa, virginica and versicolor</em>**. <br />
+
+It holds information on:
+
+>- Sepal length
+
+>- Sepal width
+
+>- Petal length
+
+>- Petal width
+
+## Data set summary
+Let's first have a look at the summary table of the Iris data set, by using the <code>summary()</code> command:
+
+```{r, echo = FALSE, results='asis',out.extra = 'class="centre" style="width: 500px;"'}
+kable(summary(iris[,c(1:4)]))
+```
+
+#Visualisation of data distributions
+##Helpful plots before modelling
+Before we start with the linear regression model, we need to get an idea of the underlying data and its distribution.
+We know that the linear regression has the assumtptions:
+
+>-
+
+
+## QQ-plot: 
+```{r, echo=FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+library(tidyr)
+data(iris)
+iris_long <- gather(iris, Specification, measurement, Sepal.Length:Petal.Width, factor_key=TRUE)
+
+ggplot(iris_long, aes(sample=measurement, color=Specification))+stat_qq()
+
+```
+
+## Boxplots to check for outliers
+
+
+```{r echo = FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+
+  
+
+ggplot(iris_long, aes(y=measurement,x=Specification, col=Specification)) +
+  labs(title = "Iris Specifications", x = "", y = "Measurment in cm") +
+  geom_boxplot() +
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+```
+
+
+## Plot the variables
+
+```{r, echo = FALSE, out.extra = 'class="centre" style="width: 700px;"'}
+data(iris)
+plot1 <- ggplot(iris, aes(Petal.Width, Petal.Length)) +
+  labs(title = "Petal", x = "Petal Width", y = "Petal Length") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+plot2 <- ggplot(iris, aes(Sepal.Width, Sepal.Length)) +
+  labs(title = "Sepal", x = "Sepal Width", y = "Sepal Length") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+plot3 <- ggplot(iris, aes(Petal.Width, Sepal.Width)) +
+  labs(title = "Petal and Sepal", x = "Petal Width", y = "Sepal Width") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+plot4 <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
+  labs(title = "Petal and Sepal", x = "Petal Length", y = "Sepal Length") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+grid.arrange(plot1, plot2, plot3, plot4, nrow=2, ncol=2)
+
+```
+
+##Linear Regression
+In the plots, we could already see, that <em>petal length</em> and <em>petal width</em> seem to be associated. This is obvious when drawing a line in the plot.
+Let's now perform a linear regression model in R.
+
+<code>lm(Petal.Length~Petal.Width, data=iris)</code>
+
+>- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>Petal.Length</em>**.
+
+>- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>Petal.Width</em>**.
+
+>- We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
+
+##Linear Regression Results
+Now we want to look at the results of the linear regression. So how do we get the <em>p-value</em> and <em>\(\beta\)-coefficient</em> for the association?
+
+In R, we add the <code>summary()</code> function to the <code>lm()</code> function, like so:
+
+<code>summary(lm(y~x, data=data))</code>
+
+##Example Results
+
+```{r, message=FALSE,  warning=FALSE, error=FALSE, echo = FALSE,out.extra = 'class="centre" style="width: 500px;"'}
+#summary(lm(Petal.Length~Petal.Width, data=iris))
+lm1 <- lm(Petal.Length~Petal.Width, data=iris)
+library(sjPlot)
+tab_model(lm1, file="output.html")
+```
+
+##Diagnostics
+
+<div align="center">
+```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+library(tidyverse)
+library(broom)
+library(knitr)
+theme_set(theme_classic())
+
+model <- lm(Petal.Length~Petal.Width, data=iris)
+
+model.diag.metrics <- augment(model)
+kable(as.matrix(head(model.diag.metrics)), format='markdown')
+```
+</div>
+
+
+After running the linear regression, we need to test the quality of the model. At first, we look at the <b>R<sup>2</sup></b> statistic.
+The <b>R<sup>2</sup></b> statistic is a measure of how much variance in the data was explained by our model. 
+
+<br></br>
+
+The <b>R<sup>2</sup></b> statistic ranges from 0 to 1, where 1 means the model explains 100% of the variance. This means the model fits the data perfectly.
+
+
+## Diagnostic Plots
+
+<div align="center">
+```{r, echo=FALSE, warning=FALSE, error=FALSE}
+# par(mfrow = c(2, 2))
+# plot(model)
+library(ggfortify)
+autoplot(model)
+```
+</div>
+
+
+
+
+
+<div align="center">
+```{r eval=FALSE, include=FALSE}
+ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
+  geom_point() +
+  stat_smooth(method = lm, se = FALSE) +
+  geom_segment(aes(xend = Petal.Length, yend = .fitted), color = "red", size = 0.3)
+
+```
+</div>
