@@ -1,0 +1,7 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^admin$
+^archive$
+^data-raw$
+^\.git$
