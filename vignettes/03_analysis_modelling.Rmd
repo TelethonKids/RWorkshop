@@ -23,7 +23,7 @@ library(knitr)
 library(ggplot2)
 library(gridExtra)
 library(grid)
-
+library(tidyverse)
 data(iris)
 
 ```
@@ -36,10 +36,16 @@ data(iris)
 >- Multiple Linear Regression 
 >- Logistic Regression
 
-```{r, echo = FALSE, out.extra = 'class="centre" style="width: 500px;"'}
-data(iris)
-ggplot(iris, aes(Petal.Width, Petal.Length)) +
-  labs(title = "Iris Dataset", x = "Petal Width", y = "Petal Length") +
+```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, 'class="centre", out.extra=, style="width:, warnings=FALSE}
+setwd("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/")
+tki_demo <- read_csv("data/demo.csv")
+
+tki_demo %>%
+  filter(day2 < 100) %>%
+  
+
+ggplot( aes(day2, day3)) +
+  labs(title = "TKI Dataset", x = "day1", y = "day2") +
   geom_point(size = 4) +
   geom_smooth(method='lm')+
   scale_color_telethonkids("light") +
