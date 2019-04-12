@@ -236,6 +236,7 @@ levels(y)
 
 ## Classes - logical
 
+- Class <code>logical</code> holds only two 
 
 
 ## Classes - factor

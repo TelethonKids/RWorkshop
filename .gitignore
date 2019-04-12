@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.Ruserdata
+.RCache
+
+# Ignore data files
+/admin
+/archive
