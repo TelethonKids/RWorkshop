@@ -17,295 +17,556 @@ vignette: >
 ---
 
 ```{r init, include = FALSE, echo = FALSE}
+library(knitr)
 library(biometrics)
 library(lubridate)
 library(tidyverse)
 library(kableExtra)
+
+source("assets/R/hooks.R")
+
+load("../data/dat.RData")
+
 ```
 
-## Session resources
+## Session Resources
 
-[https://github.com/TelethonKids/RWorkshop](https://github.com/TelethonKids/RWorkshop)
+All resouces for this Introduction to R Workshp are available on GitHub: [https://github.com/TelethonKids/RWorkshop](https://github.com/TelethonKids/RWorkshop)
 
-[Worked example](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
-[Slides](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html)
+**Introduction to Data Manipulation**
 
-## Data manipulation (FD 2h) - PS
+Download the slides from this link: [https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html)
 
-- Overview of base v tidyverse [history/evolution]
-- Read in data 
-- Expand on classes (data/time [lubridate - year], string processing)
-- Summarise/tidy (cleaning)
-- Create columns/conditional create (case_when, if/else)
-- Subset/merge/join
-- Gather/spread/melt/cast/separate/reshape
-- Functions
-- Applying functions (apply/tidyverse)
+Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
 
+# Session Overview
+
+## Overview
+
+>- Overview of base *vs.* tidyverse [history/evolution]
+>- Read in data 
+>- Expand on classes (data/time [lubridate - year], string processing)
+>- Summarise/tidy (cleaning)
+>- Create columns/conditional create (case_when, if/else)
+>- Subset/merge/join
+>- Gather/spread/melt/cast/separate/reshape
+>- Functions
+>- Applying functions (apply/tidyverse)
 
 # Tidyverse
 
 ## What is the Tidyverse?
 
-![https://www.tidyverse.org/](assets/images/tidyverse.PNG)
-
 <blockquote type = "blockquote">The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
 <footer class="blockquote-footer">[https://www.tidyverse.org/](https://www.tidyverse.org/)</footer></blockquote>
 
+&nbsp;
 
-Install the complete tidyverse with:
+Install the complete Tidyverse collection in R (or RStudio) with:
 
     install.packages("tidyverse")
 
-## Overview of base v tidyverse [history/evolution]
+## Tidyverse Packages
 
-# Worked example
+<div class="col2">
 
-## Files
-
-Data is available from GitHub repository ......
-
-## Read in raw data 
-
-    library(readr)
-    
-    read_csv("/path/to/file.csv", options ...)
-
-## <code>read_csv()</code> options
-
-```{r read_csv_options, echo = F}
-tibble(
-  Option = c("col_names", "na", "trim_ws", "skip", "n_max", "guess_max", "skip_empty_rows"),
-  Description = c("If TRUE, the first row of the input will be used as the column names, and will not be included in the data frame.",
-                  "Character vector of strings to interpret as missing values.",
-                  "Should leading and trailing whitespace be trimmed from each field before parsing it?",
-                  "Number of lines to skip before reading data.",
-                  "Maximum number of records to read.",
-                  "Maximum number of records to use for guessing column types.",
-                  "Should blank rows be ignored altogether?")) %>%
-  mutate(Option = paste0("<div style = 'font-size: 0.5em;'><code>", Option, "</code></div>"),
-         Description = paste0("<div style = 'font-size: 0.5em;'>", Description, "</div>")) %>% # add <code> tag to all options
-  kable("html", escape = F) %>%
-  kable_styling("hover", full_width = F)
+```{r, echo = F, out.extra = "figure"}
+include_graphics("assets/images/tidyverse.PNG")
 
 ```
 
-More help can be found by typing `?read_delim` into the R console.
+>- **dplyr**    (Data wrangling)
+>- **ggplot2**  (Data visualisation)
+>- **readr**    (Import raw data formats)
+>- **tibble**   (Adds to `data.frame`)
+>- **tidyr**    (Functions to reshape data)
+>- **purrr**    (Functional programming tools)
 
+</div>
 
-## Other ways to read in data
+## Overview of base *vs.* tidyverse [history/evolution]
 
-    load("path/to/file.RData")
-    
+TO DO
+
+# Introduction to Data\nManipulation
+
+## Worked Example
+
+Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
+
+or type the code yourself!
+
+## Library Packages
+
+    library(dplyr)
+    library(lubridate)
     library(readr)
-    read_rds("path/to/file.rds")
+    library(tidyr)
+
+# Reading In Data
+
+## Raw Data | Example
+
+`readr` has packages to import common data files.
+
+    read_csv("data/demo.csv")
+    
+## Raw Data | Options
+
+    ?read_delim
+
+<div class="col2">
+
+**file**                          </br>
+**delim**                         </br>
+quote = "\""                      </br>
+escape_backslash = FALSE          </br>
+escape_double = TRUE              </br>
+col_names = TRUE                  </br>
+col_types = NULL                  </br>
+locale = default_locale()         </br>
+**na = c("", "NA")**              </br>
+quoted_na = TRUE                  </br>
+comment = ""                      </br>
+trim_ws = FALSE                   </br>
+skip = 0                          </br>
+n_max = Inf,                      </br>
+**guess_max = min(1000, n_max)**  </br>
+progress = show_progress()        </br>
+skip_empty_rows = TRUE)
+
+</div>
+
+## R Data Formats
+
+    load("data/demo.RData")
+    
+    readRDS("path/to.file")
+    
+RData files can store multiple datasets/variables; .rds files hold only one.
+
+## Other Types of Data
+
+Excel files
 
     library(readxl)
     read_xlxs("path/to/file.xlsx")
 
+Stata
+
     library(readstata13)
     readstata13("path/to/file.sta")
     
-    Foreign library (SAS, SPSS, ...)
+Databases: refer to the `odbc` package
+
+Other data types - Google it!
+
+# Data Classes
+
+## Common Classes
+
+>- Numeric    (numbers)
+>- Character  (letters)
+>- Logical    (true/false)
+>- Factor     (structured groupings)
+>- Date       (date and time data)
+
+>- Missing data is repestended by **NA** (there is only one missing data code in R)
+
+## Vector
+
+    vec_character <- c("One", "Two", "Three")
     
-Data can also be read directly from a database into R!
+    vec_integer <- c(1, 2, 3)
+    
+    vec_logical <- c(T, T, F)
 
-## Data frame (tibble)
+Vectors hold a collection of data of the **same** class.
 
-A data frame is a table (or 2 dimensional array-like object) where each column
-stores the data of one variable and each row represents a single record.
+## Data Frame (AKA Tibble)
 
-These are the properties of a data frame:
+A data frame is a table, or 2 dimensional array-like object. For tidy data, 
+each column represents a variable and each row represents a single record.
 
-* All columns should have a unique name
-* All data in one column will be the same class, however each column can be different
-* Each column should have the same number of data items/rows
-* Rows are not named
+Data frames are a collection of vectors.
 
-Vectors of data are stored in columns:
+In a data frame:
 
-    c("A", "B", "C", "D")
+>- all columns should have a unique name
+>- all data in one column will be the same class, however column can be different
+>- each column should be the same length
+>- rows are not named.
 
-## Expand on classes (data/time [lubridate - year], string processing)
+## Example of a Data Frame | Syntax
 
-* Numeric
-* Character
-* Logical
-* Factor
-* Date
+    df <- tibble(
+      character = c("One", "Two", "Three"),
+      integer = 1:3,
+      numeric = integer * 1.0,
+      logical = c(T, T, F),
+      factor = factor(c("dog", "cat", "Dog"),
+                      levels = c("dog", "Dog", "cat", "Cat"),
+                      labels = c("Woof", "Woof", "Meow", "Meow")),
+      date = ymd(c("2019-04-11", "2019-05-11", "2019-06-11")),
+      missing = NA
+    )
 
-* Missing data - NA (there is only one missing data code in R)
+## Example of a Data Frame | Looks like
 
-# Summarise/tidy (cleaning)
+    # A tibble: 3 x 7
+      character integer numeric logical factor date       missing
+      <chr>       <int>   <dbl> <lgl>   <fct>  <date>     <lgl>  
+    1 One             1       1 TRUE    Woof   2019-04-11 NA     
+    2 Two             2       2 TRUE    Meow   2019-05-11 NA     
+    3 Three           3       3 FALSE   Woof   2019-06-11 NA     
 
-```{r data}
-load("../data/dat.RData")
+## Vector Class
+
+    class(vec_logical)
+    
+    [1] "logical"
+    
+&nbsp;
+
+    class(df$date)
+    
+    [1] "Date"
+
+## Data Frame Structure
+
+    str(df)
+    
+    Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	3 obs. of  7 variables:
+     $ character: chr  "One" "Two" "Three"
+     $ integer  : int  1 2 3
+     $ numeric  : num  1 2 3
+     $ logical  : logi  TRUE TRUE FALSE
+     $ factor   : Factor w/ 2 levels "Woof","Meow": 1 2 1
+     $ date     : Date, format: "2019-04-11" "2019-05-11" "2019-06-11"
+     $ missing  : logi  NA NA NA
+
+## Dates | Input
+
+    library(lubridate)
+    
+>- Dates - multiple formats (all items in vectors should be consistent)
+    
+    dmy("16/02/1985")
+    mdy("Feb 16 1985")
+    ymd("1985-February 16")
+    
+    [1] "1985-02-16"
+    
+>- Date and time
+    
+    ymd_hms("1985/02/05 12:30:00", tz = "Australia/Perth")
+
+The defult timezone is Universal Time Coordinated (UTC/GMP).
+
+## Dates | Output
+
+```{r date_output_format, comment = NA}
+format(tki_demo$dob, "%d %b %Y") %>%
+  head()
 
 ```
 
-```{r str_data}
-str(tki_demo)
+## Dates | Format Options
+
+```{r date_format_options, echo = F, include = F}
+format_options <- tibble(code = c("%a", "%b", "%c", "%H", "%j", "%M", "%S", "%W",
+                                  "%x", "%y", "%z", "%A", "%B", "%d", "%I", "%m",
+                                  "%p", "%U", "%W", "%X", "%Y", "%Z"),
+                         Description = c("Abbreviated weekday", "Abbreviated month","Locale-specific date and time",
+                                         "Decimal hours (24 hour)", "Decimal day of the year", "Decimal minute",
+                                         "Decimal second", "Decimal Weekday (0=Sunday)", "Locale-specific Date",
+                                         "2-digit year", "Offset from GMT", "Full weekday", 
+                                         "Full month", "Decimal date", "Decimal hours (12 hour)", "Decimal month",
+                                         "Locale-specific AM/PM", "Decimal week of the year (starting on Sunday)",
+                                         "Decimal week of the year (starting on Monday)", "Locale-specific Time",
+                                         "4-digit year", "Time zone (character)"),
+                         level = c(rep.int(1, 11), rep.int(2, 11)))
 
 ```
 
-## Data summary - high level descriptives
+<div class = "small">
 
-```{r summary_data}
+| Code | Description | Code | Description |
+|------|-------------|------|-------------|
+| %a | Abbreviated weekday | %A | Full weekday |
+| %b | Abbreviated month | %B | Full month |
+| %c | Locale-specific date and time | %d | Decimal date |
+| %H | Decimal hours (24 hour) | %I | Decimal hours (12 hour) |
+| %j | Decimal day of the year | %m | Decimal month |
+| %M | Decimal minute | %p | Locale-specific AM/PM |
+| %S | Decimal second | %U | Decimal week of the year (starting on Sunday) |
+| %W | Decimal Weekday (0=Sunday) | %W | 	Decimal week of the year (starting on Monday) |
+| %X | Locale-specific Date | %X | Locale-specific Time |
+| %y | 2-digit year | %Y | 4-digit year |
+| %z | Offset from GMT | %Z | Time zone (character) |
+
+</div>
+
+# Cleaning and Data Wrangling
+
+## High Level Data Summary
+
+```{r summary_data, comment = NA}
 summary(tki_demo)
 
 ```
 
-## Looking at the data
+## Pipe Operator "%>%"
 
-```{r head_data}
-head(tki_demo)
+    library(dplyr)
+
+>- Allows a constant flow of data from one function to the next
+>- The output data of the previous function is generally assumed to be the first argument
+>- Helpful to think of `dplyr` as a series of verbs that are piped together
+
+> Data frame %>% filter() %>% select() %>% mutate() %>% summarise() %>% view()
+
+## Filter
+
+```{r filter, comment = NA}
+tki_demo %>%
+  filter(dob > ymd("2005-01-01"), smoker, intervention == "Drug 2") %>%
+  head()
 
 ```
 
-## Create columns/conditional create (if/else)
+## Select | Including
 
-New column can be created with `mutate()`
-
-```{r ifelse}
+```{r select_include, comment = NA}
 tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years") %>% round(1),
-         teenager = ifelse(age >= 13, T, F)) %>%
+  select(id, dob, intervention) %>%
+  head()
+
+```
+  
+## Select | Excluding
+
+```{r select_exclude, comment = NA}
+tki_demo %>%
+  select(-dob, -day1) %>%
+  head()
+
+```
+
+## Mutate | ifelse
+
+```{r mutate_ifelse, eval = F}
+tki_demo %>%
+  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years"),
+         teenager = ifelse(age >= 12, T, F)) %>%
   select(id, dob, age, teenager) %>%
   head()
 
 ```
 
-## <code>case_when()</code>
+## Mutate | ifelse
 
-```{r case_when, eval = F}
+```{r mutate_ifelse_2, echo = F, comment = NA}
 tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%
-           as.duration() %>%
-           as.numeric("years") %>%
-           round(1),
-         age_category = case_when(
-           age < 12 ~ "Younger than 12 years",
-           age < 14 ~ "12 - 13 years",
-           age < 16 ~ "14 - 15 years",
-           age < 18 ~ "15 - 17 years",
-           T ~ "Older than 18 years"
-         ),
-         factor(age_category,
-                levels = c("Younger than 12 years","12 - 13 years",
-                           "14 - 15 years", "15 - 17 years",
-                           "Older than 18 years"))) %>%
-  select(id, dob, age, age_category) %>%
+  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years"),
+         teenager = ifelse(age >= 12, T, F)) %>%
+  select(id, dob, age, teenager) %>%
   head()
 
 ```
 
-## <code>case_when()</code>
+## Mutate | case_when
 
-```{r case_when_output, echo = F}
+```{r mutate_casewhen, eval = F}
 tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%
-           as.duration() %>%
-           as.numeric("years") %>%
-           round(1),
-         age_category = case_when(
-           age < 12 ~ "Younger than 12 years",
-           age < 14 ~ "12 - 13 years",
-           age < 16 ~ "14 - 15 years",
-           age < 18 ~ "15 - 17 years",
-           T ~ "Older than 18 years"
-         ),
-         factor(age_category,
-                levels = c("Younger than 12 years","12 - 13 years",
-                           "14 - 15 years", "15 - 17 years",
-                           "Older than 18 years"))) %>%
-  select(id, dob, age, age_category) %>%
+  mutate(age = interval(dob, Sys.Date()) %>%as.duration() %>% as.numeric("years"),
+         age_cat = case_when(
+           age < 5 ~ "Younger than 5 years old",
+           age < 10 ~ "5 - 9 years old",
+           age < 15 ~ "10 - 14 years old",
+           age >= 15 ~ "Older than 15 years",
+           T ~ NA_character_
+         )) %>%
+  select(id, dob, age, age_cat)
+
+```
+
+## Mutate | case_when
+
+```{r mutate_casewhen_2, echo = F, comment = NA}
+tki_demo %>%
+  mutate(age = interval(dob, Sys.Date()) %>%as.duration() %>% as.numeric("years"),
+         age_cat = case_when(
+           age < 5 ~ "Younger than 5 years old",
+           age < 10 ~ "5 - 9 years old",
+           age < 15 ~ "10 - 14 years old",
+           age >= 15 ~ "Older than 15 years",
+           T ~ NA_character_
+         )) %>%
+  select(id, dob, age, age_cat) %>%
   head()
 
 ```
 
-## Parsing dates with <code>lubridate</code>
+## Combining Multiple Data Sources | Join
 
-* Run some examples - adding day if YYYYMM data provided
-* Converting char to date
-* example with date and time
-
-# Subset/merge/join
-
-## needs fixing
-
-So far all the tools you’ve learned have worked with complete data frames. If you want to pull out a single variable, you need some new tools, $ and [[. [[ can extract by name or position; $ only extracts by name but is a little less typing.
-
-df <- tibble(
-  x = runif(5),
-  y = rnorm(5)
-)
-
-## Extract by name
-df$x
-
-df[["x"]]
-
-
-## Extract by position
-df[[1]]
-
-To use these in a pipe, you’ll need to use the special placeholder .:
-
-df %>% .$x
-
-df %>% .[["x"]]
-
-# Gather/spread/melt/cast/separate/reshape
-
-## Long/wide
-
-Gather/spread
-
-## Functions
-
-Don't repeat yourself (DRY)
-
-Use a function to replace frequently used code
-* Call on the function many times
-* automate a function over a list with the <code>apply()</code> family of functions
-
-```{r funciton}
-square <- function(x) {
-  x^2
-}
-
-square(4)
+```{r join, eval = F}
+tki_demo %>%
+  left_join(tki_demo_complications,
+            by = "id") %>%
+  filter(!is.na(complications)) %>%
+  head()
 
 ```
 
-## Applying functions (apply/tidyverse)
+Data can be joined on multiple columns that can have different names.
 
-```{r, eval = F}
-day1_mean <- function(x) {
-  tibble(id = x$id,
-         day1_mean = mean(x$day1, na.rm = T)
-  )
-}
+## Combining Multiple Data Sources | Join
 
+```{r join_2, echo = F, comment = NA}
 tki_demo %>%
-  split(.$id) %>%
-  lapply(day1_mean) %>%
-  bind_rows()
+  left_join(tki_demo_complications,
+            by = "id") %>%
+  filter(!is.na(complications)) %>%
+  head()
 
 ```
 
-## Applying functions (apply/tidyverse)
+# Summarising Data
 
-```{r, echo = F}
-day1_mean <- function(x) {
-  tibble(id = x$id,
-         day1_mean = mean(x$day1, na.rm = T)
-  )
-}
+## Summarise
+
+```{r summarise, comment = NA}
+tki_demo %>%
+  summarise(n = n(),
+            day1_mean = mean(day1, na.rm = T),
+            day2_median = median(day2, na.rm = T),
+            day3_sd = sd(day3, na.rm = T)) %>%
+  head()
+
+```
+
+## Summarise | Single Group
+
+```{r summarise_single_group, comment = NA}
+tki_demo %>%
+  group_by(intervention) %>%
+  summarise(mean = mean(day1, na.rm = T),
+            sd = sd(day1, na.rm = T)) %>%
+  head()
+
+```
+
+## Summarise | Multiple Groups
+
+```{r summarise_multiple_groups, eval = F}
+tki_demo %>%
+  group_by(intervention, smoker) %>%
+  summarise(mean = mean(day1, na.rm = T),
+            sd = sd(day1, na.rm = T)) %>%
+  head()
+
+```
+
+## Summarise | Multiple Groups
+
+```{r summarise_multiple_groups_2, echo = F, comment = NA}
+tki_demo %>%
+  group_by(intervention, smoker) %>%
+  summarise(mean = mean(day1, na.rm = T),
+            sd = sd(day1, na.rm = T)) %>%
+  head()
+
+```
+
+# Functions in R
+
+## Defining and Calling a Function
+
+```{r function, comment = NA}
+adder <- function(x, y, z) x + y + z
+
+adder(5, 17, -1)
+
+```
+
+## Applying Functions | mutate
+
+```{r function_mutate, comment = NA}
+tki_demo %>%
+  mutate(total = adder(day1, day2, day3)) %>%
+  head()
+
+```
+
+## Applying Functions | mutate_at
+
+```{r function_mutate_at, eval = F}
+square <- function(x) x^2
 
 tki_demo %>%
-  split(.$id) %>%
-  lapply(day1_mean) %>%
-  bind_rows()
+  mutate_at(c("day1", "day2", "day3"), list(~square(.)))
+
+```
+
+Individually apply the same function to multiple data frame columns.
+
+## Applying Functions | mutate_at
+
+```{r function_mutate_at_2, echo = F, comment = NA}
+square <- function(x) x^2
+
+tki_demo %>%
+  mutate_at(c("day1", "day2", "day3"), list(~square(.))) %>%
+  head()
+
+```
+
+## Applying Functions | mutate_if
+
+ERROR TO DO FIX
+
+```{r function_mutate_if, eval = F, comment = NA}
+tki_demo %>%
+  mutate_if(is.double, list(~square(.)))
+
+```
+
+## Applying Functions Subset Data
+
+```{r function_split, eval = F}
+tki_demo %>%
+  split(f = tki_demo$intervention) %>%
+  lapply(function(x) {
+    
+    x2 <- x %>%
+      mutate(new = ifelse(male & smoker, day1, day2 + day3))
+    x2
+    
+  }) %>%
+  bind_rows() %>%
+  head()
+
+```
+
+>- `lapply` can be easily parallelised for multi-core computing
+>- *x* is each split element of the data frame, which gets acted on one at a time
+the last item is returned
+>- `bind_rows()` combines split data back into a single data frame.
+
+## Applying Functions Subset Data
+
+```{r function_split_2, echo = F, comment = NA}
+tki_demo %>%
+  split(f = tki_demo$intervention) %>%
+  lapply(function(x) {
+    
+    x2 <- x %>%
+      mutate(new = ifelse(male & smoker, day1, day2 + day3))
+    x2
+    
+  }) %>%
+  bind_rows() %>%
+  head()
 
 ```
