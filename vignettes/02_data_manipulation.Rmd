@@ -31,7 +31,7 @@ load("../data/dat.RData")
 
 ## Session Resources
 
-All resouces for this Introduction to R Workshp are available on GitHub: [https://github.com/TelethonKids/RWorkshop](https://github.com/TelethonKids/RWorkshop)
+All resources for this Introduction to R Worksop are available on GitHub: [https://github.com/TelethonKids/RWorkshop](https://github.com/TelethonKids/RWorkshop)
 
 **Introduction to Data Manipulation**
 
@@ -43,44 +43,47 @@ Download the Worked example from here:  [https://github.com/TelethonKids/RWorksh
 
 ## Overview
 
->- Overview of base *vs.* tidyverse [history/evolution]
->- Read in data 
->- Expand on classes (data/time [lubridate - year], string processing)
->- Summarise/tidy (cleaning)
->- Create columns/conditional create (case_when, if/else)
->- Subset/merge/join
->- Gather/spread/melt/cast/separate/reshape
->- Functions
->- Applying functions (apply/tidyverse)
+>- Tidyverse
+>- Introduction to Data Manipulation
+>- Reading In Data
+>- Data Classes
+>- Cleaning and Data Wrangling
+>- Summarising Data
+>- Functions in R
 
 # Tidyverse
 
 ## What is the Tidyverse?
 
-<blockquote type = "blockquote">The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
+<blockquote type = "blockquote">The Tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
 <footer class="blockquote-footer">[https://www.tidyverse.org/](https://www.tidyverse.org/)</footer></blockquote>
 
 &nbsp;
 
 Install the complete Tidyverse collection in R (or RStudio) with:
 
-    install.packages("tidyverse")
-
-## Tidyverse Packages
-
-<div class="col2">
-
-```{r, echo = F, out.extra = "figure"}
-include_graphics("assets/images/tidyverse.PNG")
+```{r, eval = F, out}
+install.packages("tidyverse")
 
 ```
 
+## Tidyverse Packages
+
+<div class = "col2">
+
+```{r, echo = F, out.extra = "figure"}
+include_graphics("assets/images/02_tidyverse.png")
+
+```
+
+<div style="display: inline-block;">
 >- **dplyr**    (Data wrangling)
 >- **ggplot2**  (Data visualisation)
 >- **readr**    (Import raw data formats)
->- **tibble**   (Adds to `data.frame`)
+>- **tibble**   (Adds to <code>data.frame</code>)
 >- **tidyr**    (Functions to reshape data)
 >- **purrr**    (Functional programming tools)
+</div>
 
 </div>
 
@@ -88,7 +91,7 @@ include_graphics("assets/images/tidyverse.PNG")
 
 TO DO
 
-# Introduction to Data\nManipulation
+# Introduction to Data</br>Manipulation
 
 ## Worked Example
 
@@ -98,22 +101,37 @@ or type the code yourself!
 
 ## Library Packages
 
-    library(dplyr)
-    library(lubridate)
-    library(readr)
-    library(tidyr)
+```{r, eval = F}
+library(dplyr)
+library(readr)
+library(tidyr)
+# OR
+library(tidyverse)
+
+library(lubridate)
+
+```
+
+>- This session will not cover all the packages included in the Tidyverse.
+>- Lubridate isn't part of the Tidyverse, but many people think it should be.
 
 # Reading In Data
 
 ## Raw Data | Example
 
-`readr` has packages to import common data files.
+<code>readr</code> has packages to import common data files.
 
-    read_csv("data/demo.csv")
+```{r, eval = F}
+read_csv("data/demo.csv")
+
+```
     
 ## Raw Data | Options
 
-    ?read_delim
+```{r, eval = F}
+?read_delim
+
+```
 
 <div class="col2">
 
@@ -139,9 +157,12 @@ skip_empty_rows = TRUE)
 
 ## R Data Formats
 
-    load("data/demo.RData")
-    
-    readRDS("path/to.file")
+```{r, eval = F}
+load("data/demo.RData")
+
+readRDS("path/to.file")
+
+```
     
 RData files can store multiple datasets/variables; .rds files hold only one.
 
@@ -149,15 +170,21 @@ RData files can store multiple datasets/variables; .rds files hold only one.
 
 Excel files
 
-    library(readxl)
-    read_xlxs("path/to/file.xlsx")
+```{r, eval = F}
+library(readxl)
+read_xlxs("path/to/file.xlsx")
+
+```
 
 Stata
 
-    library(readstata13)
-    readstata13("path/to/file.sta")
+```{r, eval = F}
+library(readstata13)
+readstata13("path/to/file.sta")
+
+```
     
-Databases: refer to the `odbc` package
+Databases: refer to the <code>odbc</code> package
 
 Other data types - Google it!
 
@@ -171,15 +198,18 @@ Other data types - Google it!
 >- Factor     (structured groupings)
 >- Date       (date and time data)
 
->- Missing data is repestended by **NA** (there is only one missing data code in R)
+>- Missing data is represented by **NA** (there is only one missing data code in R)
 
 ## Vector
 
-    vec_character <- c("One", "Two", "Three")
-    
-    vec_integer <- c(1, 2, 3)
-    
-    vec_logical <- c(T, T, F)
+```{r, results = "hide"}
+vec_character <- c("One", "Two", "Three")
+
+vec_integer <- c(1, 2, 3)
+
+vec_logical <- c(T, T, F)
+
+```
 
 Vectors hold a collection of data of the **same** class.
 
@@ -199,138 +229,141 @@ In a data frame:
 
 ## Example of a Data Frame | Syntax
 
-    df <- tibble(
-      character = c("One", "Two", "Three"),
-      integer = 1:3,
-      numeric = integer * 1.0,
-      logical = c(T, T, F),
-      factor = factor(c("dog", "cat", "Dog"),
-                      levels = c("dog", "Dog", "cat", "Cat"),
-                      labels = c("Woof", "Woof", "Meow", "Meow")),
-      date = ymd(c("2019-04-11", "2019-05-11", "2019-06-11")),
-      missing = NA
-    )
+```{r, results = "hide"}
+df <- tibble(
+  character = c("One", "Two", "Three"),
+  integer = 1:3,
+  numeric = integer * 1.0,
+  logical = c(T, T, F),
+  factor = factor(c("dog", "cat", "Dog"),
+                  levels = c("dog", "Dog", "cat", "Cat"),
+                  labels = c("Woof", "Woof", "Meow", "Meow")),
+  date = ymd(c("2019-04-11", "2019-05-11", "2019-06-11")),
+  missing = NA
+)
+
+```
 
 ## Example of a Data Frame | Looks like
 
-    # A tibble: 3 x 7
-      character integer numeric logical factor date       missing
-      <chr>       <int>   <dbl> <lgl>   <fct>  <date>     <lgl>  
-    1 One             1       1 TRUE    Woof   2019-04-11 NA     
-    2 Two             2       2 TRUE    Meow   2019-05-11 NA     
-    3 Three           3       3 FALSE   Woof   2019-06-11 NA     
+```{r, echo = F, comment = NA}
+df
+
+```
 
 ## Vector Class
 
-    class(vec_logical)
-    
-    [1] "logical"
-    
+```{r, comment = NA} 
+class(vec_logical)
+
+```
+
 &nbsp;
 
-    class(df$date)
-    
-    [1] "Date"
+```{r, comment = NA}
+class(df$date)
+
+```
+
 
 ## Data Frame Structure
 
-    str(df)
-    
-    Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	3 obs. of  7 variables:
-     $ character: chr  "One" "Two" "Three"
-     $ integer  : int  1 2 3
-     $ numeric  : num  1 2 3
-     $ logical  : logi  TRUE TRUE FALSE
-     $ factor   : Factor w/ 2 levels "Woof","Meow": 1 2 1
-     $ date     : Date, format: "2019-04-11" "2019-05-11" "2019-06-11"
-     $ missing  : logi  NA NA NA
+```{r, comment = NA}
+str(df)
 
-## Dates | Input
+```
 
-    library(lubridate)
-    
->- Dates - multiple formats (all items in vectors should be consistent)
-    
-    dmy("16/02/1985")
-    mdy("Feb 16 1985")
-    ymd("1985-February 16")
-    
-    [1] "1985-02-16"
-    
->- Date and time
-    
-    ymd_hms("1985/02/05 12:30:00", tz = "Australia/Perth")
+>- The top row is the class(es) of the data frame object.
+>- Variable name: &nbsp;&nbsp; Class &nbsp;&nbsp;&nbsp;&nbsp; The first few entries
 
-The defult timezone is Universal Time Coordinated (UTC/GMP).
+## Dates | Coding Data
 
-## Dates | Output
+```{r, results = "hide"}
+library(lubridate)
+
+```
+    
+```{r, results = "hide"}
+dmy("16/02/1985")
+mdy("Feb 16 1985")
+ymd("1985-February 16")
+```
+    
+```{r, echo = F, comment = NA}
+dmy("16/02/1985")
+
+```
+
+All date entries that are within a vector should be of a consistent format.
+
+## Date/Time | Coding Dates
+
+```{r, comment = NA}
+ymd_hms("1985/02/05 12:30:00", tz = "Australia/Perth")
+
+```
+
+By default, the time zone is Universal Time Coordinated (UTC/GMP).
+
+## Dates | Displaying Dates
 
 ```{r date_output_format, comment = NA}
 format(tki_demo$dob, "%d %b %Y") %>%
-  head()
+  head(3)
 
 ```
 
-## Dates | Format Options
+## Formatting Date/Time
 
-```{r date_format_options, echo = F, include = F}
-format_options <- tibble(code = c("%a", "%b", "%c", "%H", "%j", "%M", "%S", "%W",
-                                  "%x", "%y", "%z", "%A", "%B", "%d", "%I", "%m",
-                                  "%p", "%U", "%W", "%X", "%Y", "%Z"),
-                         Description = c("Abbreviated weekday", "Abbreviated month","Locale-specific date and time",
-                                         "Decimal hours (24 hour)", "Decimal day of the year", "Decimal minute",
-                                         "Decimal second", "Decimal Weekday (0=Sunday)", "Locale-specific Date",
-                                         "2-digit year", "Offset from GMT", "Full weekday", 
-                                         "Full month", "Decimal date", "Decimal hours (12 hour)", "Decimal month",
-                                         "Locale-specific AM/PM", "Decimal week of the year (starting on Sunday)",
-                                         "Decimal week of the year (starting on Monday)", "Locale-specific Time",
-                                         "4-digit year", "Time zone (character)"),
-                         level = c(rep.int(1, 11), rep.int(2, 11)))
-
-```
-
-<div class = "small">
+<div class="small_table"></div>
 
 | Code | Description | Code | Description |
 |------|-------------|------|-------------|
-| %a | Abbreviated weekday | %A | Full weekday |
-| %b | Abbreviated month | %B | Full month |
-| %c | Locale-specific date and time | %d | Decimal date |
-| %H | Decimal hours (24 hour) | %I | Decimal hours (12 hour) |
-| %j | Decimal day of the year | %m | Decimal month |
-| %M | Decimal minute | %p | Locale-specific AM/PM |
-| %S | Decimal second | %U | Decimal week of the year (starting on Sunday) |
-| %W | Decimal Weekday (0=Sunday) | %W | 	Decimal week of the year (starting on Monday) |
-| %X | Locale-specific Date | %X | Locale-specific Time |
-| %y | 2-digit year | %Y | 4-digit year |
-| %z | Offset from GMT | %Z | Time zone (character) |
-
-</div>
+| **%a** | Abbreviated weekday | **%A** | Full weekday |
+| **%b** | Abbreviated month | **%B** | Full month |
+| **%c** | Locale-specific date and time | **%d** | Decimal date |
+| **%H** | Decimal hours (24 hour) | **%I** | Decimal hours (12 hour) |
+| **%j** | Decimal day of the year | **%m** | Decimal month |
+| **%M** | Decimal minute | **%p** | Locale-specific AM/PM |
+| **%S** | Decimal second | **%U** | Decimal week of the year (starting on Sunday) |
+| **%W** | Decimal Weekday (0=Sunday) | **%W** | 	Decimal week of the year (starting on Monday) |
+| **%X** | Locale-specific Date | **%X** | Locale-specific Time |
+| **%y** | 2-digit year | **%Y** | 4-digit year |
+| **%z** | Offset from GMT | **%Z** | Time zone (character) |
 
 # Cleaning and Data Wrangling
 
 ## High Level Data Summary
 
-```{r summary_data, comment = NA}
-summary(tki_demo)
+```{r summary_data, comment = NA, class = "small"}
+summary(tki_demo[, c("male", "day1", "day2", "day3")])
 
 ```
 
 ## Pipe Operator "%>%"
 
-    library(dplyr)
+```{r eval = F}
+library(dplyr)
+
+```
 
 >- Allows a constant flow of data from one function to the next
 >- The output data of the previous function is generally assumed to be the first argument
->- Helpful to think of `dplyr` as a series of verbs that are piped together
+>- Helpful to think of <code>dplyr</code> as a series of verbs that are piped together
 
-> Data frame %>% filter() %>% select() %>% mutate() %>% summarise() %>% view()
+```{r, eval = F}
+Data frame %>% filter() %>% select() %>%
+  mutate() %>% summarise() %>% view()
+
+```
 
 ## Filter
 
 ```{r filter, comment = NA}
 tki_demo %>%
-  filter(dob > ymd("2005-01-01"), smoker, intervention == "Drug 2") %>%
+  filter(dob > ymd("2005-01-01"),
+         smoker,
+         intervention == "Drug 2") %>%
   head()
 
 ```
@@ -357,8 +390,15 @@ tki_demo %>%
 
 ```{r mutate_ifelse, eval = F}
 tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years"),
-         teenager = ifelse(age >= 12, T, F)) %>%
+  mutate(
+    age = interval(
+      dob,
+      Sys.Date()) %>%
+        as.duration() %>% 
+        as.numeric("years"),
+    
+    teenager = ifelse(age >= 12, T, F)) %>%
+  
   select(id, dob, age, teenager) %>%
   head()
 
@@ -367,26 +407,30 @@ tki_demo %>%
 ## Mutate | ifelse
 
 ```{r mutate_ifelse_2, echo = F, comment = NA}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years"),
-         teenager = ifelse(age >= 12, T, F)) %>%
+(tmp <- tki_demo %>%
+  mutate(
+    age = interval(
+      dob,
+      Sys.Date()) %>%
+      as.duration() %>%
+      as.numeric("years"),
+    teenager = ifelse(age >= 12, T, F)) %>%
   select(id, dob, age, teenager) %>%
-  head()
+  head())
 
 ```
 
 ## Mutate | case_when
 
 ```{r mutate_casewhen, eval = F}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%as.duration() %>% as.numeric("years"),
-         age_cat = case_when(
-           age < 5 ~ "Younger than 5 years old",
-           age < 10 ~ "5 - 9 years old",
-           age < 15 ~ "10 - 14 years old",
-           age >= 15 ~ "Older than 15 years",
-           T ~ NA_character_
-         )) %>%
+tmp %>%
+  mutate(age_cat = case_when(
+    age < 5 ~ "Younger than 5 years old",
+    age < 10 ~ "5 - 9 years old",
+    age < 15 ~ "10 - 14 years old",
+    age >= 15 ~ "Older than 15 years",
+    T ~ NA_character_
+  )) %>%
   select(id, dob, age, age_cat)
 
 ```
@@ -394,15 +438,14 @@ tki_demo %>%
 ## Mutate | case_when
 
 ```{r mutate_casewhen_2, echo = F, comment = NA}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%as.duration() %>% as.numeric("years"),
-         age_cat = case_when(
-           age < 5 ~ "Younger than 5 years old",
-           age < 10 ~ "5 - 9 years old",
-           age < 15 ~ "10 - 14 years old",
-           age >= 15 ~ "Older than 15 years",
-           T ~ NA_character_
-         )) %>%
+tmp %>%
+  mutate(age_cat = case_when(
+    age < 5 ~ "Younger than 5 years old",
+    age < 10 ~ "5 - 9 years old",
+    age < 15 ~ "10 - 14 years old",
+    age >= 15 ~ "Older than 15 years",
+    T ~ NA_character_
+  )) %>%
   select(id, dob, age, age_cat) %>%
   head()
 
@@ -524,11 +567,11 @@ tki_demo %>%
 
 ## Applying Functions | mutate_if
 
-ERROR TO DO FIX
-
-```{r function_mutate_if, eval = F, comment = NA}
+```{r function_mutate_if, comment = NA}
 tki_demo %>%
-  mutate_if(is.double, list(~square(.)))
+  select(-dob) %>%
+  mutate_if(is.double, list(~square(.))) %>%
+  head(4)
 
 ```
 
@@ -549,10 +592,12 @@ tki_demo %>%
 
 ```
 
->- `lapply` can be easily parallelised for multi-core computing
+## Applying Functions Subset Data
+
+>- <code>lapply()</code> can *easily* be parallelised for multi-core computing
 >- *x* is each split element of the data frame, which gets acted on one at a time
 the last item is returned
->- `bind_rows()` combines split data back into a single data frame.
+>- <code>bind_rows()</code> combines split data back into a single data frame.
 
 ## Applying Functions Subset Data
 
