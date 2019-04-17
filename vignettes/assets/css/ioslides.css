@@ -57,6 +57,16 @@ em {
   font-size: 0.8em;
 }
 
+div.small_table + table tr td {
+  font-size: 0.7em;
+  padding: 3px;
+}
+
+.prettyprint {
+  left: 0px;
+  width: 100%;
+  padding: 10px;
+}
 
 slides > slide {
   -webkit-transition: all $transition$s ease-in-out;
@@ -79,7 +89,8 @@ hgroup {
 }
 
 article {
-  margin-left: 50px;
+  margin-left: 45px;
+  width: 80%;
 }
 
 slide::after {
