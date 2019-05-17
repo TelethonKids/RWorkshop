@@ -167,6 +167,22 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
 - typically we only use '<code>=</code>' within brackets
     + it's comlicated and related to environments (scoping)
 
+
+## Basic syntax - operations
+
+- basic math
+
+```{r}
+3+3
+3*3
+```
+
+- functions
+
+```{r}
+sum(1, 2, 3, 4, NA, 5, na.rm = T)
+```
+
 ## Basic syntax - brackets
 
 - Round brackets <code>(something) | (x, y)</code>
@@ -188,7 +204,15 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
     + code won't be executed
 - question mark <code>?something</code> for help
     + double question mark to search for commands
-- basic mathmatical operators
+
+## Basic syntax - other
+
+- The letters <code>T</code> and <code>F</code> are 'reserved' - logicals
+    + indicate <code>TRUE</code> and <code>FALSE</code> respectively
+    + used regularly within <mark>arguments</mark>
+- Working directory 
+    + <code>getwd()</code> and <code>setwd()</code>
+    + best practise is using relative directory paths!
 
 ## Data classes
 
@@ -455,27 +479,119 @@ Array
 
 ## Reading data in
 
+- The function you use depends on your file type
+- Flat files (plain text files) (<code>.csv, .txt</code>) can be read in with base functions
+    + <code>read.csv()</code> and <code>read.table()</code> are commonly use
+- Other files require specific packages (next topic)
+    + the <mark>readxl</mark> package reads in (<code>.xlx, .xlsx</code>) excel files via <code>read_excel()</code>
+    + the <mark>foreign</mark> and <mark>haven</mark> packages read in SPSS, Stata, and SAS files
 
+## Reading data in - arguments
 
+- <code>header = T</code>
+    + is the top row of your dataset column headers, normally yes
+- <code>na.strings = c("NA", "missing", "999")</code>
+    + this will mean cells end up as true R based <code>NA</code> values, which is very handy 
+- <code>stringsAsFactors = F</code>
+    + can cause issues if not explicitly set as <code>F</code> (ID codes, free text responses)
 
+## Reading data in - example
 
+<code>
+dat <- read.csv("/Users/USERNAME/Documents/my_data_file.csv", 
+                header = T, na.strings = c("NOT CONTACTED"))
+</code>
+or
+<code>
+dat <- read.csv("../data/my_data_file.csv", 
+                header = T, na.strings = c("NOT CONTACTED"))
+</code>
 
-## Installing/loading packages
+- This will load the csv file into a <code>data.frame</code> called <code>dat</code>
+- Ensure path is valid (shared drives)
 
+## Reading data in - considerations
 
+- Excel
+    + skip lines? data classes (dates?)? 
+    + which worksheet(s?) did you want?
+- SPSS
+    + do you want category labels? or underlying stored values (think factors)?
+- A single character that isn't <code>0-9</code> or <code>.</code> will mean a variable is read in as character
+- You can load data directly from the web
+    + <code>read.csv("http://some.where.net/data/foo.csv")</code>
+    + you can use <code>readHTMLTable</code> from the <mark>XML</mark> package to read tables off websites
 
+## Packages - overview
 
+- Packages can be thought of as 'bundles of functions'
+    + they can contain datasets and other things too
+- They extend the functionality of R
+    + New graphing abilities, modeling methods, faster data manipulation 
+- Well over 10k packages
+- Managed by CRAN (Comprehensive R Archive Network)
+    + installed from CRAN/CRAN mirrors
+- Very common for scripts to start by calling many packages
+- Require semi-regular updating (easy)
+
+## Packages - installing and loading
+
+- Installed via: <code>install.packages("ggplot2")</code>
+    + note the quote marks
+    + by default, this will also install that packages <mark>dependencies</mark> 
+- Packages loaded for use via: <code>install.packages(ggplot)</code>
+    + note the lack of quote marks
+- Updated via: <code>updated.packages()</code>
+    + considered using '<code>ask = T</code>'
+
+## Packages - installing and loading
+
+- Lots of packages are installed direct from the developer
+    + installed via <code>devtools::install_github()</code>
+    + that is, using the <code>install_github()</code> function within the <code>devtools</code> package
+- Our package is installed this way
+    + <code>devtools::install_github("TelethonKids/biometrics", build_vignettes = TRUE)</code>
+
+## Packages - citing and more
+
+- Running <code>.libPaths()</code> will show where (on your computer) your libraries are stored
+- Running <code>citation("ggplot2")</code> will tell you have to cite a package
+- Beware of clashes
+    + packages overiding base functions, or two packages with the same function
+    + not overly common, and you will get warned
+- Help file will tell you what package a function resides in
+    + Help file for <code>?geom_path</code> starts with <code>geom_path {ggplot2}</code>
+
+## Saving within R
+
+- Save all scripts (<code>.R, .Rmd</code>) so you can *always regenerate your results from your original data files
+- Saving your <mark>workspace</mark> is commonly done
+    + this will include *everything within your current session (/environment)
+    + all datasets, model output, custom functions, settings changes - but not loaded libraries
+    + saved via: <code>save.image("my_session.Rdata")</code>
+    + loaded via: <code>load("my_session.Rdata")</code>
+
+## Saving within R
+
+- Save specific (individual) structures/object on their own (not commonly done)
+    + saved via: <code>saveRDS(dat, "my_data_frame.RDS")</code>
+    + loaded via: <code>readRDS("my_data_frame.RDS")</code>
+- Exporting data via write commands
+    + export via: <code>write.csv(dat, "my_csv_export.csv")</code>
+    + commonly used arguments include <code>row.names = F</code> and <code>na = ""</code>
 
 # Staying up-to-date in R
 
 ## Further reading
 
-- Stackoverflow https://stackoverflow.com/questions/tagged/r
-- R-bloggers https://www.r-bloggers.com/
-- Twitter #rstats https://twitter.com/search?q=%23rstats
-- UCLA's educational resources https://stats.idre.ucla.edu/other/dae/
+- R-bloggers [https://www.r-bloggers.com/](https://www.r-bloggers.com/)
+- Stackoverflow [https://stackoverflow.com/questions/tagged/r](https://stackoverflow.com/questions/tagged/r)
+- Twitter #rstats [https://twitter.com/search?q=%23rstats](https://twitter.com/search?q=%23rstats)
+- UCLA's educational resources [https://stats.idre.ucla.edu/other/dae/](https://stats.idre.ucla.edu/other/dae/)
+- Hadley resource
+- Coding style guides
 
-
+# Fin
 
 ## END END END
 ## END END END
