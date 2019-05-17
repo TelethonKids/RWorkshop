@@ -18,29 +18,28 @@ vignette: >
 
 ```{r init, include = FALSE, echo = FALSE}
 library(biometrics)
-
+load("../data/dat.RData")
 ```
 
 # R-Fundamentals
 
 ## What we will cover
 
-- What R is?
-    + An overview
-    + A very brief history
-    + What R isn't
-- How to get setup with R
-- Must know fundamentals in R
-- Basic commands in R
-    + Installing/loading packages
+- OveRview
+    + What R is, brief history, what R isn't
+- How to get setup and use R
+- Fundamentals of R
+    + Basic syntax
+    + Data classes
     + Reading data in
-    + Import
-- A preview
+    + Installing/loading packages
+- ? A preview
 - Staying up-to-date in R
+    + Further reading
 
-# R - What R is
+# OveRview
 
-## Overview
+## What R is
 
 <img style="float: right;" src="https://cran.r-project.org/Rlogo.svg" width="150">
 
@@ -62,13 +61,15 @@ R is:
 ## Great, so what is R?
 
 <blockquote class="blockquote">
-  <div class = "large"><p>R is an environment where you can read <font color="red"><b>(pull)</b></font> data in <font color="red"><b>(from a variety of sources)</b></font>, carry out <font color="red"><b>(very complex)</b></font> data manipulation, analyse your data <font color="red"><b>(via a broad an rapidly increasing suite of statistical models)</b></font>, and prepare <font color="red"><b>(reproducibly)</b></font> your results for others to see <font color="red"><b>(produce graphics, complete documents, interactive interfaces)</b></font>.</p></div>
+  <div class = "large"><p>R is an environment where you can:
+  <ul>
+  <li>read <font color="red"><b>(pull)</b></font> data in <font color="red"><b>(from a variety of sources)</b></font>, </li>
+  <li>carry out <font color="red"><b>(very complex)</b></font> data manipulation, </li>
+  <li>analyse your data <font color="red"><b>(via a broad an rapidly increasing suite of statistical models)</b></font>, and </li>
+  <li>prepare <font color="red"><b>(reproducibly)</b></font> your results for others to see <font color="red"><b>(produce graphics, complete documents, interactive interfaces)</b></font>.</li>
+  </p></div>
   <footer class="blockquote-footer">Me. (Today)</footer>
 </blockquote>
-
-## More about R
-
-
 
 ## A very brief history
 
@@ -88,7 +89,6 @@ R is:
 - Annual conferences
     - 
 
-
 ## What R isn't?
 
 R is not a:
@@ -96,14 +96,7 @@ R is not a:
 - designated data collection tool (*?)
 - (permanent) data storage system (*?)
 - 
-
-# Getting started and the building blocks
-
-## We'll cover
-- The RStudio IDE
-- Classes
-- Structures
-- Important Syntax
+# R - How to get setup and use R
 
 ## But first - Disclaimer
 
@@ -112,15 +105,92 @@ R is not a:
 - This presentation focuses on the collective 'best practice' advice of our team of daily R users
 - Some other ideas are presented/summarised at the end of this presentation
 
+## Interacting with R
+
+- R is an interactive language
+<mark>
+- Type a command, submit, immediate response 
+    + line by line
+</mark>
+- Save "data" (used very broadly) in a vast array of formats
+- (Typically) commands saved in a plain text file (.R)
+- Commands can be submitted in bulk
+    + large scale analysis/data manipulation
+    + 'one-click' reports
+
 ## And - a heads up
 
 - R is a cAsE sensitive language
-- R is largely very forgiving with where white spaces is (or isn't)
-- R is largely very forgiving with 
+- R is largely forgiving with where white spaces is (or isn't)
+    + including line breaks, bracket placement etc
+
+## Installing R
+
+- Download R for your OS
+    + [https://cran.r-project.org/](https://cran.r-project.org/)
+- You will need admin rights
+- Download RStudio (optional)
+    + [https://www.rstudio.com/products/rstudio/download/](https://www.rstudio.com/products/rstudio/download/)
 
 ## RStudio IDE
 
-## Classes
+```{r, echo = F, out.extra = "figure", out.width = "85%"}
+knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
+```
+
+## RStudio IDE
+
+- Screen divided into quarters, typically
+    + One for your code (commands)
+    + One for your console (commands executed/results shown)
+    + One for your environment management
+    + One for your plots/help
+- Customisable and quite diverse
+    + Terminal, code repository management, package management, file management etc
+
+# R - Fundamentals of R
+    + Basic syntax
+    + Data classes
+    + Reading data in
+    + Installing/loading packages
+    
+## Basic syntax - assign
+
+- Assign '<code><-</code>'
+    + less than sign followed by dash
+    + puts the right hand side into the left hand side
+    
+<code>a <- 3</code>
+
+- a will now be 3
+- you can use '<code>=</code>' in place of '<code><-</code>'
+- typically we only use '<code>=</code>' within brackets
+    + it's comlicated and related to environments (scoping)
+
+## Basic syntax - brackets
+
+- Round brackets <code>(something) | (x, y)</code>
+    + multiple things inside, separated by a comma
+    + typically used to group <mark>arguments</mark> of a function
+- Square brackets <code>[something] | [ ] [,] [[ ]]</code>
+    + multiple things inside, separated by a comma
+    + typically used for <mark>indices</mark> when navigating *within* a structure
+- Curly brackets <code>{something}</code>
+    + groups multiple <mark>lines of code</mark> 
+    + typically used when creating functions
+
+## Basic syntax - other
+
+- colon <code>:</code> used to create a sequence
+    + <code>1:4</code> produces <code>1 2 3 4</code>
+    + *double colon to access functions in libraries that aren't loaded*
+- hashtag for comments <code># Something</code>
+    + code won't be executed
+- question mark <code>?something</code> for help
+    + double question mark to search for commands
+- basic mathmatical operators
+
+## Data classes
 
 - Each data point, which you can think of as a cell, will have a class.
 - There are many classes, most (and the common ones) are nice and clear.
@@ -221,7 +291,7 @@ class(x + 0.4)
 
 ## Classes - factor
 
-```{r}
+```{r error = T}
 y <- c(Cat, Dog, Other)
 y <- c("Cat", "Dog", "Other", "Dog")
 y
@@ -236,7 +306,15 @@ levels(y)
 
 ## Classes - logical
 
-- Class <code>logical</code> holds only two 
+- Class <code>logical</code> variables can only take two*, <code>TRUE</code> or <code>FALSE</code>
+- These can be abbreviated as <code>T</code> and <code>F</code> 
+- Often used as a selection mechanism (records in/out, in conditional (<code>if</code>) statements)
+
+## Classes - logical
+
+
+
+
 
 
 ## Classes - factor
@@ -264,7 +342,7 @@ levels(y)
 
 ## Classes - other
 
-## Structures 
+## Data structures 
 
 - Structure is our term, it is not an R term
 - Some structures are a <code>class</code> within R
@@ -286,7 +364,7 @@ i <- 1
 
 ## Structures - vector
 
-```{r}
+```{r error = T}
 x <- c(3,4,5,6,8)
 x
 x + 2
@@ -373,7 +451,41 @@ Matrix
 
 Array
 
-## Important Syntax
+
+
+## Reading data in
+
+
+
+
+
+
+## Installing/loading packages
+
+
+
+
+
+# Staying up-to-date in R
+
+## Further reading
+
+- Stackoverflow https://stackoverflow.com/questions/tagged/r
+- R-bloggers https://www.r-bloggers.com/
+- Twitter #rstats https://twitter.com/search?q=%23rstats
+- UCLA's educational resources https://stats.idre.ucla.edu/other/dae/
+
+
+
+## END END END
+## END END END
+## END END END
+## END END END
+## END END END
+## END END END
+## END END END
+
+## Important Syntax recap
 
 Many of these have been seen during the prior examples:
 - <code><-</code> assign, puts the right hand side into the left hand side
@@ -387,60 +499,3 @@ Many of these have been seen during the prior examples:
 - <code></code>
 - <code></code>
 - <code></code>
-
-()
-[]
-<- c
-
-
-# More to getting started
-
-## Packages (libraries) 
-
-## Reading data in
-
-# Basic commands in R
-# Basic commands in R
-    + Installing/loading packages
-    + Reading data in
-    + Import
-    
-# A preview
-
-
-
-
-
-# Closing
-
-## Staying up-to-date in R
-
-## Other ways to skin a cat
-
-
-##  I'd do this
-
-dgfh
-
-<img style="float: right;" src="https://i0.wp.com/wptavern.com/wp-content/uploads/2016/07/stack-overflow.png?ssl=1" width="150">
-
-gfhfdhg
-
-
-<img style="float: right;" src="https://www.r-bloggers.com/wp-content/uploads/2016/04/R_02_2016-05-01.png" width="150">
-
-
-fhg
-
-
-
-
-
-
-
-
-
-
-
-
-
