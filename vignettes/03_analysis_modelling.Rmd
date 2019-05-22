@@ -33,9 +33,9 @@ data(iris)
 
 ## What we cover
 
-- Linear Regression
-- Multiple Linear Regression 
-- Logistic Regression
+>- Linear Regression
+>- Multiple Linear Regression 
+>- Logistic Regression
 
 ```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, out.extra = 'class="centre" style="width: 500px;"', warnings=FALSE}
 setwd("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/")
@@ -55,42 +55,33 @@ ggplot( aes(day2, day3)) +
 ```
 
 # Linear Regression
-##Linear Regression in R
 
-In a linear regression, we aim to find a model: <br /> 
+## Linear Regression in R 
 
-- that represents our data and 
+In a linear regression, we aim to find a model: <br/> 
 
-- can give information about the association between our variables of interest.
+>- that represents our data and 
+>- can give information about the association between our variables of interest.
 
-The command in R for a linear model is <br />
+The command in R for a linear model is <br/>
   
   <code>lm(y~x)</code>.
 
 **y** is the outcome variable that interests us and **x** is the variable that we want to test in its association with **y**
 
-## Example: the iris data set
-The Iris data set consists of information about three different species of iris flowers, namely **<em>setosa, virginica and versicolor</em>**. <br />
-
-It holds information on:
-
-- Sepal length
-
-- Sepal width
-
-- Petal length
-
-- Petal width
-
+## Example: 
 ## Data set summary
-Let's first have a look at the summary table of the Iris data set, by using the <code>summary()</code> command:
+Let's first have a look at the summary table of the example data set, by using the <code>summary()</code> command:
 
-```{r, echo = FALSE, results='asis',out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
-kable(summary(tki_demo[,c(6:8)]))
+```{r, echo = FALSE, out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
+#kable(summary(tki_demo[,c(6:8)]))
+
+summary(tki_demo[,c(6:8)])
+
 ```
 
-#Visualisation of data distributions
-##Helpful plots before modelling
+# Visualisation of data distributions
+## Helpful plots before modelling
 Before we start with the linear regression model, we need to get an idea of the underlying data and its distribution.
 We know that the linear regression has the assumtptions:
 
@@ -173,7 +164,7 @@ grid.arrange(plot1, plot2, plot3, plot4, nrow=2, ncol=2)
 
 ```
 
-##Linear Regression
+## Linear Regression
 In the plots, we could already see, that <em>petal length</em> and <em>petal width</em> seem to be associated. This is obvious when drawing a line in the plot.
 Let's now perform a linear regression model in R.
 
@@ -185,14 +176,14 @@ Let's now perform a linear regression model in R.
 
 - We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
 
-##Linear Regression Results
+## Linear Regression Results
 Now we want to look at the results of the linear regression. So how do we get the <em>p-value</em> and <em>\(\beta\)-coefficient</em> for the association?
 
 In R, we add the <code>summary()</code> function to the <code>lm()</code> function, like so:
 
 <code>summary(lm(y~x, data=data))</code>
 
-##Example Results
+## Example Results
 
 ```{r, message=FALSE,  warning=FALSE, error=FALSE, echo = FALSE,out.extra = 'class="centre" style="width: 500px;"'}
 #summary(lm(Petal.Length~Petal.Width, data=iris))
@@ -201,7 +192,7 @@ library(sjPlot)
 tab_model(lm1, file="output.html")
 ```
 
-##Diagnostics
+## Diagnostics
 
 <div align="center">
 ```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE}
@@ -250,3 +241,10 @@ ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
 
 ```
 </div>
+
+# Multiple Linear Regression
+## How to?
+Multiple linear regression works with the same function inR : <code>lm(y ~ x + covar1 + covar2 + ... + covarx , data=data)</code>
+
+# Logistic regression
+
