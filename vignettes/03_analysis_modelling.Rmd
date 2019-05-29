@@ -25,11 +25,29 @@ library(gridExtra)
 library(grid)
 library(tidyverse)
 library(ggpubr)
+library(broom)
+library(jtools)
+library(tidyr)
+
 data(iris)
 
 ```
 
 # Statistical Modelling in R
+
+## Notes
+
+order of included R functions:
+
+>- <code>lm()</code>  
+>- <code>summary()</code>  
+>- <code>ggplot() + statqq()</code>  
+>- <code>ggplot() + geom_smooth()</code>  
+>- <code>tidy(), augment(), glance()</code>  
+>- <code>summ(), plot_summs()</code>  
+>- <code>autoplot()</code>  
+>- <code>glm() (different families)</code>  
+
 
 ## What we cover
 
@@ -65,7 +83,7 @@ In a linear regression, we aim to find a model: <br/>
 
 The command in R for a linear model is <br/>
   
-  <code>lm(y~x)</code>.
+  <code style="aligne:center">lm(y~x)</code>.
 
 **y** is the outcome variable that interests us and **x** is the variable that we want to test in its association with **y**
 
@@ -88,14 +106,12 @@ We know that the linear regression has the assumtptions:
 -
 
 
-## QQ-plot: 
-```{r, echo=FALSE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
-library(tidyr)
-
+## QQ-plot: {.smaller}
+```{r, echo=TRUE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
 tki_demo %>%
   filter(day2 < 100) %>%
   gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
-  ggplot( aes(sample=measurement, color=Days))+stat_qq()
+  ggplot( aes(sample=measurement, color=Days)) + stat_qq() + facet_wrap(~Days)
 
 ```
 
@@ -164,7 +180,10 @@ grid.arrange(plot1, plot2, plot3, plot4, nrow=2, ncol=2)
 
 ```
 
-## Linear Regression
+# Linear Regression
+
+## The <code>lm()</code> function
+
 In the plots, we could already see, that <em>petal length</em> and <em>petal width</em> seem to be associated. This is obvious when drawing a line in the plot.
 Let's now perform a linear regression model in R.
 
@@ -183,14 +202,35 @@ In R, we add the <code>summary()</code> function to the <code>lm()</code> functi
 
 <code>summary(lm(y~x, data=data))</code>
 
-## Example Results
+## Example Results {.smaller}
 
 ```{r, message=FALSE,  warning=FALSE, error=FALSE, echo = FALSE,out.extra = 'class="centre" style="width: 500px;"'}
 #summary(lm(Petal.Length~Petal.Width, data=iris))
 lm1 <- lm(Petal.Length~Petal.Width, data=iris)
 library(sjPlot)
-tab_model(lm1, file="output.html")
+#tab_model(lm1, file="output.html")
+summary(lm1)
 ```
+# <code>jtools</code> and <code>broom</code>
+
+## Improving the accessibility of the <code>lm()</code> results
+
+The output before contains a lot of relevant information, but it is not straighforward to access the individual parameters like p-values and betas
+The <code>broom</code> R package is in line with the "tidy" data handling in R and turns the linear model results into an easy accessible tibble format:
+
+```{r}
+tidy(lm1)
+```
+
+
+## Improving output style {.smaller}
+
+The <code>broom</code> package helps with the accessibility of the output, but the style of the output is not very appealing for a publiation or a report. The <code>jtools</code> package helps with this and has other nice functionalities such as forrest plots for coefficients and confidence intervals:
+
+```{r results = 'asis'}
+export_summs(lm1)
+```
+
 
 ## Diagnostics
 
@@ -217,16 +257,13 @@ The <b>R<sup>2</sup></b> statistic is a measure of how much variance in the data
 The <b>R<sup>2</sup></b> statistic ranges from 0 to 1, where 1 means the model explains 100% of the variance. This means the model fits the data perfectly.
 
 
-## Diagnostic Plots
+## Diagnostic Plots {.smaller}
 
-<div align="center">
-```{r, echo=FALSE, warning=FALSE, error=FALSE}
-# par(mfrow = c(2, 2))
-# plot(model)
+```{r, echo=TRUE, warning=FALSE, error=FALSE}
 library(ggfortify)
 autoplot(model)
 ```
-</div>
+
 
 
 
@@ -243,8 +280,56 @@ ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
 </div>
 
 # Multiple Linear Regression
-## How to?
+## How to? {.smaller}
 Multiple linear regression works with the same function inR : <code>lm(y ~ x + covar1 + covar2 + ... + covarx , data=data)</code>
+The R standard output is also very messy for reports, but helps with a first visual inspection in the command line:
+
+```{r}
+summary(lm(day3 ~ day2 + male + intervention, data=tki_demo))
+```
+
+## Example 1: one model {.smaller}
+With the demo data set:
+```{r}
+export_summs(lm(day3 ~ day2 + male + smoker, data = tki_demo))
+```
+
+## Example 2: more models {.smaller}
+With the demo data set:
+```{r}
+lm1 <- lm(day3 ~ day2, data = tki_demo)
+lm2 <- lm(day3 ~ day2 + male + smoker, data = tki_demo)
+export_summs(lm1, lm2)
+```
+## Forrest plot to compare coefficients in the model
+Often we want to visualise the coefficients in the model to see their impact on the outcome, or visualise the coefficient of specific variable in two models, that differ only in the adjusted covariates. The <code>jtools</code> package has a nice function to do this very easily, utilising <code>ggplot2</code>:  
+<code>plot_summs()</code>
+
+## Example 1: one model
+
+```{r}
+plot_summs(lm1)
+```
+
+## Example 2: more models
+
+```{r}
+plot_summs(lm1, lm2)
+```
+
+## Example 3: compare specific coefficients
+
+```{r}
+plot_summs(lm1, lm2, coefs="day2")
+```
+
+
+## Getting more info: Confidence Intervalls {.smaller}
+With <code>jtools</code> we can access more information from the model in an easier step. Here, we access the confidence intervall and variance inflation factor (for multicollinearity testing), but leave out the p-values:
+
+```{r}
+summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE, confint = TRUE, pvals = FALSE)$coeftable
+```
 
 # Logistic regression
 

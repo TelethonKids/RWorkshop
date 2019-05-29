@@ -25,7 +25,7 @@ library(grid)
 library(tidyverse)
 library(ggpubr)
 library(ggfortify) #autoplot function, see below in diagnostics
-theme_set(theme_classic())
+theme_set(theme_minimal())
 
 #### Read in data ----
 # Read in a CSV files
@@ -72,7 +72,7 @@ no_out %>%
   labs(title = "Days: 1 to 3 outlier removed", x = "", y = "Measurment") +
   geom_boxplot() +
   scale_color_telethonkids("light") +
-  theme_minimal() +
+  theme_minimal()
   
 
 
@@ -139,8 +139,32 @@ model_da2_day3 <- lm(day3 ~ day2, data=no_out)
 summary(model_da2_day3)
 
 #' What do you see in the R output?
+#' Is this in line with tidy data?
 
+library(broom) #tidy data in linear model output
 
+tidy(model_da2_day3)
+
+# 
+augment(model_da2_day3)
+
+# More model statistics
+glance(model_da2_day3)
+
+# jtools
+summ(model_da2_day3, scale = TRUE, part.corr = TRUE, confint = TRUE, pvals = FALSE)
+
+# Forrest plot for the coefficients: using jtools
+
+library(jtools)
+model <-lm(day3 ~ day2 + male + smoker + intervention, data=no_out)
+plot_summs(model)
+
+# You can also compare estimates of different models
+
+model1 <-lm(day3 ~ day2 , data=no_out)
+model2 <-lm(day3 ~ day2 , data=no_out)
+plot_summs(model1,model2)
 
 #### Model Diagnostic plots ----
 #' With base R it is very easy to look at the model diagnostic plots.
@@ -209,8 +233,13 @@ summary(modelSmoker)
 #'family to binomial(link='logit'). Let's see if being a smoker is associated with being male.
 
 logModelSmoker <- glm(smoker ~ male, data=no_out, family=binomial(link='logit'))
-summary(logModelSmoker)
+summ(logModelSmoker)
 
+# For the glm you can specify different models and perform for example a Poisson regression
 
+#### Another often used model is the linesr mixed effects model, for inclusion
+#' of random and fixed effects
+
+# lme(day2 ~ day3 + male, data=no_out,  random = ~ 1|id)
 
 
