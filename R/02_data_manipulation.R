@@ -185,6 +185,11 @@ tki_demo %>%
             day2_median = median(day2, na.rm = T),
             day3_sd = sd(day3, na.rm = T))
 
+# Summarise multiple columns
+
+tki_demo %>%
+  summarise_at(c("day1", "day2", "day3"), mean, na.rm = T)
+
 # Summarise by a single group
 
 tki_demo %>%
@@ -198,6 +203,54 @@ tki_demo %>%
   group_by(intervention, smoker) %>%
   summarise(mean = mean(day1, na.rm = T),
             sd = sd(day1, na.rm = T))
+
+
+
+
+#### Reshaping data ----
+
+remotes::install_github("tidyverse/tidyr")
+library(tidyr)
+
+
+# Wide to long format (preferred data structure)
+
+tmp <- tki_demo %>%
+  pivot_longer(cols = starts_with("day"), # i.e. c("day1", "day2", "day3")
+               names_to = "day",
+               values_to = "score",
+               names_prefix = "day", # regular expression to remove matching text
+               names_ptypes = list(day = integer()))
+
+# Long to wide
+
+tmp %>%
+  pivot_wider(names_from = day,
+              values_from = score,
+              names_prefix = "day")
+
+# Unite multiple columns into one
+
+(united <- tmp %>%
+    unite("treatment", day, intervention, sep = "."))
+
+# Separate a column that holds multiple pieces of information into many
+
+united %>%
+  separate(treatment, c("day", "intervention"), sep = "\\.")
+  # Note the "\\" - . is a special character in regular expressions
+
+
+
+
+#### String Manipulation ----
+
+library(stringr)
+
+tibble(patient = 1:5,
+       market_name = c("Humira", "Eliquis", "Revlimid", "Keytruda", "Eliquis"),
+       name = c("adalimumab", "apixaban", "lenalidomide", "pembrolizumab", "apixaban")) %>%
+  mutate(apixaban = str_detect(.data$name, "^ap.*$"))
 
 
 
@@ -245,3 +298,26 @@ tki_demo %>%
     
   }) %>%
   bind_rows() # combine split data frame back into one
+
+
+
+
+#### Test Your Skills
+
+#' With the tki_demo and tki_demo_complications data sets, for each participant,
+#' find the first time the "Man Flu" complication was observed by participants
+#' taking Drug 1 and a measurement greater than 15.0 was observed and return the
+#' participants id, intervention, gender, trial day, and the measurement.
+#' (note, only males can suffer from Man Flu virus)
+
+left_join(tki_demo, tki_demo_complications, by = "id") %>%
+  pivot_longer(starts_with("day"),
+               names_to = "day",
+               values_to = "measurement",
+               names_prefix = "day") %>%
+  filter(intervention == "Drug 1",
+         measurement > 15.0,
+         male) %>%
+  select(id, intervention, male, day, measurement) %>%
+  group_by(id) %>%
+  top_n(1, desc(day))
