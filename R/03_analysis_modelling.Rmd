@@ -1,0 +1,285 @@
+---
+title: "RStudio course: modelling"
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+library(learnr)
+library(biometrics)
+library(ggplot2)
+library(gridExtra)
+library(grid)
+library(tidyverse)
+library(ggpubr)
+library(ggfortify) #autoplot function, see below in diagnostics
+library(plotly)
+library(broom)
+library(jtools)
+library(nlme)
+
+theme_set(theme_minimal())
+knitr::opts_chunk$set(echo = FALSE)
+
+#Pre-load data
+demoData <- read_csv("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/data/demo.csv")
+
+# the outlier free data frame
+no_out <- 
+  demoData %>%
+  filter(day2 < 100)
+
+# For the modeling
+model_day2_day3 <- lm(day3 ~ day2, data=no_out)
+```
+
+
+# __Modelling in R__
+
+## How To
+
+This interactive document allows you to follow along with code and play with the data input and different types of models. All the code is provided and you can
+execute it by clicking the "Run Code" button. Try it out yourself and see what happens when you change certain aspects of the code. 
+
+<p style="color:red;">!!!Important, variables that you create in one chunk of code are not transferred to the next code chunk. If you want to use a variable you created, stay in the same chunk or repeat the variable creation step in the next code chunk!!!</p>
+
+A RStudio workshop provided by the biometrics group of:
+<img src="https://www.telethonkids.org.au/globalassets/media/images/type-of-image/logos/tki-logo-large.jpg">
+
+********
+
+## Exploring the Data
+
+This is our data, called *demoData*:
+
+```{r demoData, exercise=TRUE, exercise.eval=TRUE, warning=FALSE}
+print(demoData)
+```
+
+### Getting to know the distribution of the variables
+
+We first focus on the day1 - day 2 variables. We use boxplot to look for outliers.
+Look at the following plot:
+
+```{r add-function, exercise=TRUE, warning=FALSE}
+demoData %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
+  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  labs(title = "Days: 1 to 3 with outlier", x = "", y = "Measurment") +
+  geom_boxplot() +
+  scale_color_telethonkids("light") +
+  theme_minimal() 
+```
+
+### Exclude outlier
+
+How can you exclude the outlier with the tidyverse?
+
+```{r add-outlier, exercise=TRUE, warning=FALSE}
+no_out <- demoData %>%
+  filter(day2 < 100)
+  
+
+no_out %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
+  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  labs(title = "Days: 1 to 3 outlier removed", x = "", y = "Measurment") +
+  geom_boxplot() +
+  scale_color_telethonkids("light") +
+  theme_minimal()
+```
+
+### QQ plot 
+
+Now we use the quantile-quantile plot (QQ plot) of the variables to check for the distribution of the data
+
+```{r qqplot, exercise=TRUE, warning=FALSE}
+demoData %>%          
+  # Select the demo data and utilise the pipe
+  filter(day2 < 100) %>%
+  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%   
+  ggplot(aes(sample=measurement)) + 
+  stat_qq() +
+  stat_qq_line() +  # This ads a line to the plot to better judge the deviation
+  theme_minimal() +
+  facet_wrap(~Days, nrow = 1) 
+```
+
+### Explore association
+
+Let's plot the day vriables against each other to see if there is any association
+
+```{r association , exercise=TRUE, warning=FALSE}
+no_out <- demoData %>%
+  filter(day2 < 100)
+
+plot_day1_day2 <- 
+  no_out %>%
+  ggplot(aes(x=day1, y=day2)) +
+  labs(title = "Day 1 and Day 2", x = "day 1", y = "day 2") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+plot_day2_day3 <- 
+  no_out %>%
+  ggplot(aes(x=day2, y=day3)) +
+  labs(title = "Day 2 and Day 3", x = "day 2", y = "day 3") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+plot_day1_day3 <- 
+  no_out %>%
+  ggplot(aes(x=day1, y=day3)) +
+  labs(title = "Day 1 and Day 3", x = "day 1", y = "day 3") +
+  geom_point(size = 4) +
+  geom_smooth(method='lm')+
+  scale_color_telethonkids("light") +
+  theme_minimal()
+
+
+
+grid.arrange(plot_day1_day2, plot_day2_day3, plot_day1_day3, nrow=2, ncol=2)
+```
+
+
+## Linear Regression
+
+In the plots, we could see that day 2 and day 3 seem to be correlated. Let's perform a linear model 
+and see if we can find a significant association.
+
+```{r lm , exercise=TRUE, warning=FALSE}
+lm(day3 ~ day2, data=no_out)
+```
+
+
+### Save the model in a variable
+
+
+```{r savelm , exercise=TRUE, warning=FALSE}
+model_day2_day3 <- lm(day3 ~ day2, data=no_out)
+```
+
+### Query the variable
+
+```{r summary , exercise=TRUE, warning=FALSE}
+summary(model_day2_day3)
+```
+
+### Use the broom package to get tidy outputs from <code>lm()</code>
+
+```{r broom , exercise=TRUE, warning=FALSE}
+tidy(model_day2_day3)
+
+#glance(model_day2_day3)
+```
+
+### <code>jtools</code> for publication ready tables and plots
+
+```{r jtools, exercise=TRUE, warning=FALSE}
+summ(model_day2_day3, scale = TRUE, part.corr = TRUE, confint = TRUE, pvals = FALSE)
+```
+
+### Forrest plot for coefficients and confidence intervals: <code>jtools</code>
+
+The below code plots all the coefficient in the model in a forrest plot...
+
+```{r jtoolsforrest, exercise=TRUE, warning=FALSE}
+model <-lm(day3 ~ day2 + male + smoker + intervention, data=no_out)
+plot_summs(model)
+
+```
+
+...whereas with the following code, you can compare coefficients between models
+
+```{r jtoolsforrest2, exercise=TRUE, warning=FALSE}
+model1 <-lm(day3 ~ day2 , data=no_out)
+model2 <-lm(day3 ~ day2 , data=no_out)
+plot_summs(model1,model2)
+```
+
+### Model diagnostics
+
+With base R...
+
+```{r diagnostics, exercise=TRUE, warning=FALSE}
+plot(model_day2_day3)
+```
+
+...and with the tidyverse
+
+```{r diagnosticstidy, exercise=TRUE, warning=FALSE}
+autoplot(model_day2_day3)
+```
+
+## Multiple linear regression
+
+The function for the multiple linear regression is the same as for the simple linear regression.
+It is "lm()". But now we add as many variables as we want with "+" on the right side of the 
+equation: "lm(y ~ x + covar1 + covar2 + ... + covar3, data=data)"
+
+Let's try it in our example data. Check the available variables again:
+
+```{r mlm , exercise=TRUE, warning=FALSE}
+names(no_out)
+```
+
+### Add more variables to the model 
+
+We have three variables that might be interesting in the model: sex, as represented in the "males"
+variable, "intervention" and "smoker". Let's start with adding one by one and look at the results
+
+```{r mlm2 , exercise=TRUE, warning=FALSE}
+modelIntervention <- lm(day3 ~ day2 + intervention, data=no_out)
+summary(modelIntervention)
+```
+
+
+### Visually explore the variables in this model
+
+As we can see, the intervention is highly significantly associated with the day3 value and the day1 
+value is no longer significant in the model.
+Let's try and visualise this, by coloring the intervention variable in a scatterplot
+
+```{r ggplotmlm , exercise=TRUE, warning=FALSE}
+no_out %>%
+  ggplot(aes(x=day3, y=day2, col=intervention)) +
+  geom_point()
+```
+
+You can explore the associations with the other variables of the data set above by change the coe and adding more variables.
+
+
+## Logistic Regression
+
+Logistic regression works very similar to the linear modelling. instead of the <code>lm()</code> function, we use the <code>glm()</code> function.
+this stands for _generalized linear model". In this model, we have to specify the family/distribution type, as you can see in the following code:
+
+```{r glm , exercise=TRUE, warning=FALSE}
+glm(smoker ~ male, data=no_out, family=binomial(link='logit'))
+```
+
+### Use the tidyverse as learned before to save the output and get publication ready forrest plots
+```{r glm2 , exercise=TRUE, warning=FALSE}
+
+```
+
+
+## Linear mixed effects models
+
+Linear mixed effects models work sloghtly different compared to the previous models. They are not part of the base R package and hence, we need to install/load a different package. We will sue the <code>nlme</code>
+
+```{r lme, exercise=TRUE, warning=FALSE}
+lme(day3~day2, random=~1|intervention,control=lmeControl(opt="optim"),data=no_out, na.action=na.omit)
+```
+
+
+
+
+
