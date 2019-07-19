@@ -2,6 +2,7 @@
 .Rhistory
 .Ruserdata
 .RCache
+.DS_Store
 
 # Ignore data files
 /admin
