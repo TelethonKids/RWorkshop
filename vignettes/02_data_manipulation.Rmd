@@ -49,7 +49,6 @@ Download the Worked example from here:  [https://github.com/TelethonKids/RWorksh
 >- Data Classes
 >- Cleaning and Data Wrangling
 >- Summarising Data
->- Text analysis
 >- Functions in R
 
 # Tidyverse
@@ -88,22 +87,9 @@ include_graphics("assets/images/02_tidyverse.png")
 
 </div>
 
-## The Evolution of R
+## Overview of base *vs.* tidyverse [history/evolution]
 
->- The R proejct for statistical computing (base R)
-  >- <https://www.r-project.org/>
-  >- Based on the S programming language, created by John Chambers in 1976
-  >- R was created by Ross Ihaka and Robert Gentleman at the University of Auckland, New Zealand
-  >- The project was conceived in 1992, with an initial version released in 1995 and a stable beta version in 2000
->- Phillosophy of data - Hadley Wickham
-  >- **The Tidyverse**
-  >- `ggplot` (2009)
-  >- `plyr` (2011)
-  >- Tidy Data, Journal of Statistical Software (2014)
-  >- *R for Data Science* by **Hadley Wickham** and Garrett Grolemund (2017) <https://r4ds.had.co.nz/>
->- R Studio
-  >- Most commonly how R is used today
-  
+TO DO
 
 # Introduction to Data</br>Manipulation
 
@@ -498,15 +484,8 @@ tki_demo %>%
   summarise(n = n(),
             day1_mean = mean(day1, na.rm = T),
             day2_median = median(day2, na.rm = T),
-            day3_sd = sd(day3, na.rm = T))
-
-```
-
-## Summarise | Multiple Columns
-
-```{r summarise_multiple, comment = NA}
-tki_demo %>%
-  summarise_at(c("day1", "day2", "day3"), mean, na.rm = T)
+            day3_sd = sd(day3, na.rm = T)) %>%
+  head()
 
 ```
 
@@ -516,7 +495,8 @@ tki_demo %>%
 tki_demo %>%
   group_by(intervention) %>%
   summarise(mean = mean(day1, na.rm = T),
-            sd = sd(day1, na.rm = T))
+            sd = sd(day1, na.rm = T)) %>%
+  head()
 
 ```
 
@@ -526,7 +506,8 @@ tki_demo %>%
 tki_demo %>%
   group_by(intervention, smoker) %>%
   summarise(mean = mean(day1, na.rm = T),
-            sd = sd(day1, na.rm = T))
+            sd = sd(day1, na.rm = T)) %>%
+  head()
 
 ```
 
@@ -536,136 +517,12 @@ tki_demo %>%
 tki_demo %>%
   group_by(intervention, smoker) %>%
   summarise(mean = mean(day1, na.rm = T),
-            sd = sd(day1, na.rm = T))
-
-```
-
-# Reshaping Data
-
-## The `tidyr` package
-
->- Pivot functions Replace `gather()` and `spread()`
->- Brand new feature in `tidyr`, if these don't work, you might need to install
-from GitHub.
-
-```{r, eval = F, comment = NA}
-remotes::install_github("tidyverse/tidyr")
-library(tidyr)
-
-```
-
-## `pivot_longer()`
-
->- `pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns
->- The inverse transformation is `pivot_wider()`
-
-`pivot_longer(data, cols, names_to = "name")`
-
-## `pivot_longer()`
-
-```{r pivot_longer, comment = NA}
-tmp <- tki_demo %>%
-  pivot_longer(cols = starts_with("day"), # i.e. c("day1", "day2", "day3")
-               names_to = "day",
-               values_to = "score",
-               names_prefix = "day", # regular expression to remove matching text
-               names_ptypes = list(day = integer()))
-
-```
-
-## `pivot_longer()`
-
-```{r pivot_longer_out, comment = NA}
-tmp %>%
+            sd = sd(day1, na.rm = T)) %>%
   head()
 
 ```
 
-## `pivot_wider()`
-
->- `pivot_wider()` "widens" data, increasing the number of columns and decreasing the number of rows
->- The inverse transformation is `pivot_longer()`
-
-```{r pivot_wider, comment = NA}
-tmp %>%
-  pivot_wider(names_from = day,
-              values_from = score,
-              names_prefix = "day") %>%
-  head()
-
-```
-
-## `unite()`
-
->- Each cell should contain only 1 piece of data
->- The treatment column has day and drug type separated by a "."
-
-```{r unite, comment = NA}
-united <- tmp %>%
-  unite("treatment", day, intervention, sep = ".")
-
-united %>%
-  head()
-
-```
-
-## `separate()`
-
->- Lets fix this and put day and drug type in their place
-
-```{r separate, comment = NA}
-united %>%
-  separate(treatment, c("day", "intervention"), sep = "\\.") %>%
-  # Note the "\\" - . is a special character in regular expressions
-  head()
-
-```
-
-# Text manipulation
-
-## Regular Expressions
-
-<blockquote class="blockquote">
-  <p class="mb-0">A regular expression is a sequence of characters that define a search pattern. Usually such patterns are used by string searching algorithms for "find" or "find and replace" operations on strings, or for input validation. </p>
-  <footer class="blockquote-footer">Wikipedia</footer>
-</blockquote>
-
->- Cheatsheet: <http://www.rexegg.com/regex-quickstart.html>
-
-## The `stringr` package
-
->- `library(stringr)`
-
-<div class="columns-2">
-  - `str_detect(x, pattern)`
-  - `str_count()`
-  - `str_subset()`
-  - `str_locate()`
-  - `str_extract()`
-  - `str_match()`
-  - `str_replace()`
-  - `str_split()`
-</div>
-
-## `str_detect()` | List of Drugs
-
-```{r str_detect_data, comment = F}
-(drugs <- tibble(patient = 1:5,
-                 market_name = c("Humira", "Eliquis", "Revlimid", "Keytruda", "Eliquis"),
-                 name = c("adalimumab", "apixaban", "lenalidomide", "pembrolizumab", "apixaban"),
-                 apixaban = NA))
-
-```
-
-## `str_detect()` | Flag "apixaban" Use
-
-```{r str_detect, comment = F}
-drugs %>%
-  mutate(apixaban = str_detect(.data$name, "^ap.*$"))
-
-```
-
-# Writing R Functions
+# Functions in R
 
 ## Defining and Calling a Function
 
