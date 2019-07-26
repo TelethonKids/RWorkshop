@@ -172,6 +172,8 @@ model_day2_day3 <- lm(day3 ~ day2, data=no_out)
 summary(model_day2_day3)
 ```
 
+
+
 ### Use the broom package to get tidy outputs from <code>lm()</code>
 
 ```{r broom , exercise=TRUE, warning=FALSE}
@@ -179,6 +181,13 @@ tidy(model_day2_day3)
 
 #glance(model_day2_day3)
 ```
+
+### Make the summary table publication ready 
+
+```{r summ_tabel, exercise=TRUE, warning=FALSE}
+export_summs(tidy(model_day2_day3))
+```
+
 
 ### <code>jtools</code> for publication ready tables and plots
 
@@ -273,7 +282,7 @@ glm(smoker ~ male, data=no_out, family=binomial(link='logit'))
 
 ## Linear mixed effects models
 
-Linear mixed effects models work sloghtly different compared to the previous models. They are not part of the base R package and hence, we need to install/load a different package. We will sue the <code>nlme</code>
+Linear mixed effects models work slightly different compared to the previous models. They are not part of the base R package and hence, we need to install/load a different package. We will sue the <code>nlme</code>
 
 ```{r lme, exercise=TRUE, warning=FALSE}
 lme(day3~day2, random=~1|intervention,control=lmeControl(opt="optim"),data=no_out, na.action=na.omit)
