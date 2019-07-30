@@ -44,7 +44,7 @@ order of included R functions:
 >- <code style="color:tomato;">tidy(), augment(), glance()</code>  
 >- <code style="color:tomato;">summ(), plot_summs()</code>  
 >- <code style="color:tomato;">autoplot()</code>  
->- <code style="color:tomato;">glm() (different families)</code>  
+>- <code style="color:tomato;">glm() (different families), coef(), exp()</code>  
 >- <code style="color:tomato;">lmer()</code>
 
 ## What we cover
@@ -307,6 +307,24 @@ summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE,
      confint = TRUE, pvals = FALSE)$coeftable
 ```
 
+## Excursion: Interaction effects
+
+>- Sometimes we also want to model an interaction effect
+>- a good example is testing for a sex interaction
+>- this is done very simply in the R formula by adding the following  
+
+<code style="color:tomato">lm(y ~ x*interaction, data = data)</code>  
+
+>- as you can see we only have to state the interaction term. 
+>- This will automatically include <code style="color:tomato">x + interaction + x*interaction</code> in the model!
+
+
+## Example for interaction with output
+
+```{r}
+tidy(lm(day3 ~ day2*male, data = tki_demo))
+```
+
 
 # Generalized linear models
 
@@ -322,6 +340,19 @@ summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE,
 ```{r}
 export_summs(glm(smoker ~ male, data = tki_demo, family = binomial(link='logit')))
 ```
+
+## Odds ratios
+
+>- If you want to extract the odds ratios from your logistic regression, you can use the <code style="color:tomato;">coef()</code> and <code style="color:tomato;">exp()</code> functions in the following way:
+
+<code style="color:tomato;">exp(coef(glm(y ~ x, family = binomial(link = 'logit'), data = data)))</code>
+
+## Example Odds ratio
+
+```{r}
+exp(coef(glm(male ~ day3 + intervention, family = binomial(link = 'logit'), data = tki_demo)))
+```
+
 
 ## Code and output: Poisson Regression {.smaller}
 
@@ -352,11 +383,13 @@ lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
 ## t-test, wilcoxon-test, chi-square-test
 
 - t-test:
-    - <code style="color:tomato;">t.test(datx, daty)</code> 
+    - <code style="color:tomato;">t.test(datx, daty)</code> or
+    - <code style="color:tomato;">t.test(x ~ y, data=data)</code>
 
 
 - wilcoxon test:
-    - <code style="color:tomato;">wilcox.test(datx, daty)</code>
+    - <code style="color:tomato;">wilcox.test(datx, daty)</code> or
+    - <code style="color:tomato;">wilcox.test(x ~ y, data=data)</code>
     
     
 - chi-square-test:

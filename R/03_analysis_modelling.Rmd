@@ -19,7 +19,7 @@ library(ggfortify) #autoplot function, see below in diagnostics
 library(plotly)
 library(broom)
 library(jtools)
-library(nlme)
+library(lme4)
 
 theme_set(theme_minimal())
 knitr::opts_chunk$set(echo = FALSE)
@@ -285,7 +285,7 @@ glm(smoker ~ male, data=no_out, family=binomial(link='logit'))
 Linear mixed effects models work slightly different compared to the previous models. They are not part of the base R package and hence, we need to install/load a different package. We will sue the <code>nlme</code>
 
 ```{r lme, exercise=TRUE, warning=FALSE}
-lme(day3~day2, random=~1|intervention,control=lmeControl(opt="optim"),data=no_out, na.action=na.omit)
+lmer(day1 ~ day2 + (1 + day2 | intervention), data = demoData )
 ```
 
 
