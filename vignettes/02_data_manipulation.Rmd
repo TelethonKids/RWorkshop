@@ -8,7 +8,7 @@ output:
     logo: assets/images/logo800.jpg
     css: assets/css/ioslides.css
     widescreen: true
-    incremental: true
+    incremental: false
 vignette: >
   %\VignetteIndexEntry{Introduction to Data Manipulation}
   %\VignetteEngine{knitr::rmarkdown}
@@ -35,22 +35,22 @@ All resources for this Introduction to R Worksop are available on GitHub: [https
 
 **Introduction to Data Manipulation**
 
-Download the slides from this link: [https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html)
+Download the slides from this link: [https://github.com/TelethonKids/RWorkshop/inst/doc](https://github.com/TelethonKids/RWorkshop/inst/doc)
 
-Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
+Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R](https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R)
 
 # Session Overview
 
 ## Overview
 
->- Tidyverse
->- Introduction to Data Manipulation
->- Reading In Data
->- Data Classes
->- Cleaning and Data Wrangling
->- Summarising Data
->- Text analysis
->- Functions in R
+* Tidyverse
+* Introduction to Data Manipulation
+* Reading In Data
+* Data Classes
+* Cleaning and Data Wrangling
+* Summarising Data
+* Text analysis
+* Functions in R
 
 # Tidyverse
 
@@ -78,38 +78,41 @@ include_graphics("assets/images/02_tidyverse.png")
 ```
 
 <div style="display: inline-block;">
->- **dplyr**    (Data wrangling)
->- **ggplot2**  (Data visualisation)
->- **readr**    (Import raw data formats)
->- **tibble**   (Adds to <code>data.frame</code>)
->- **tidyr**    (Functions to reshape data)
->- **purrr**    (Functional programming tools)
+* **dplyr**    (Data wrangling)
+* **ggplot2**  (Data visualisation)
+* **readr**    (Import raw data formats)
+* **tibble**   (Adds to `data.frame`)
+* **tidyr**    (Functions to reshape data)
+* **purrr**    (Functional programming tools)
 </div>
 
 </div>
 
-## The Evolution of R
+## The Evolution of R | Base R
 
->- The R proejct for statistical computing (base R)
-  >- <https://www.r-project.org/>
-  >- Based on the S programming language, created by John Chambers in 1976
-  >- R was created by Ross Ihaka and Robert Gentleman at the University of Auckland, New Zealand
-  >- The project was conceived in 1992, with an initial version released in 1995 and a stable beta version in 2000
->- Phillosophy of data - Hadley Wickham
-  >- **The Tidyverse**
-  >- `ggplot` (2009)
-  >- `plyr` (2011)
-  >- Tidy Data, Journal of Statistical Software (2014)
-  >- *R for Data Science* by **Hadley Wickham** and Garrett Grolemund (2017) <https://r4ds.had.co.nz/>
->- R Studio
-  >- Most commonly how R is used today
+* The R project for statistical computing (Base R)
+  - <https://www.r-project.org/>
+  - Based on the S programming language, created by John Chambers in 1976
+  - R was created by Ross Ihaka and Robert Gentleman at the University of Auckland, New Zealand
+  - The project was conceived in 1992, with an initial version released in 1995 and a stable beta version in 2000
+
   
+## The Evolution of R | Tidyverse
+
+* Philosophy of data - Hadley Wickham
+  - **The Tidyverse**
+  - `ggplot` (2009)
+  - `plyr` (2011)
+  - Tidy Data, Journal of Statistical Software (2014)
+  - *R for Data Science* by **Hadley Wickham** and Garrett Grolemund (2017) <https://r4ds.had.co.nz/>
+* R Studio
+  - Most commonly how R is used today
 
 # Introduction to Data</br>Manipulation
 
 ## Worked Example
 
-Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
+Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R](https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R)
 
 or type the code yourself!
 
@@ -126,14 +129,14 @@ library(lubridate)
 
 ```
 
->- This session will not cover all the packages included in the Tidyverse.
->- Lubridate isn't part of the Tidyverse, but many people think it should be.
+* This session will not cover all the packages included in the Tidyverse.
+* Lubridate isn't part of the Tidyverse, but many people think it should be.
 
 # Reading In Data
 
 ## Raw Data | Example
 
-<code>readr</code> has packages to import common data files.
+`readr` has packages to import common data files.
 
 ```{r, eval = F}
 read_csv("data/demo.csv")
@@ -177,8 +180,12 @@ load("data/demo.RData")
 readRDS("path/to.file")
 
 ```
-    
-RData files can store multiple datasets/variables; .rds files hold only one.
+
+R has several native data types:
+
+* .RData files can store multiple datasets/variables
+  - .rda is a wrapper for .RData
+* .rds files hold only one
 
 ## Other Types of Data
 
@@ -190,29 +197,49 @@ read_xlxs("path/to/file.xlsx")
 
 ```
 
+Database connections
+
+```{r, eval = F}
+library(odbc)
+con <- dbConnect(odbc::odbc(), connection information)
+dbGetQuery(con, "SELECT * FROM table")
+
+```
+
+## Other Types of Data | Stata and SAS
+
 Stata
 
 ```{r, eval = F}
+# Stata version 13
 library(readstata13)
 readstata13("path/to/file.sta")
 
-```
-    
-Databases: refer to the <code>odbc</code> package
+# Stata version 5 - 12
+library(foreign)
+read.dta("path/to/file.sta")
 
-Other data types - Google it!
+```
+
+SAS
+
+```{r, eval = F}
+library(foreign)
+read.ssd(libname, sectionnames)
+
+```
 
 # Data Classes
 
 ## Common Classes
 
->- Numeric    (numbers)
->- Character  (letters)
->- Logical    (true/false)
->- Factor     (structured groupings)
->- Date       (date and time data)
+* Numeric    (numbers)
+* Character  (letters)
+* Logical    (true/false)
+* Factor     (structured groupings)
+* Date       (date and time data)
 
->- Missing data is represented by **NA** (there is only one missing data code in R)
+* Missing data is represented by **NA** (there is only one missing data code in R)
 
 ## Vector
 
@@ -236,10 +263,10 @@ Data frames are a collection of vectors.
 
 In a data frame:
 
->- all columns should have a unique name
->- all data in one column will be the same class, however column can be different
->- each column should be the same length
->- rows are not named.
+* all columns should have a unique name
+* all data in one column will be the same class, however column can be different
+* each column should be the same length
+* rows are not named.
 
 ## Example of a Data Frame | Syntax
 
@@ -287,8 +314,8 @@ str(df)
 
 ```
 
->- The top row is the class(es) of the data frame object.
->- Variable name: &nbsp;&nbsp; Class &nbsp;&nbsp;&nbsp;&nbsp; The first few entries
+* The top row is the class(es) of the data frame object.
+* Variable&nbsp;:&nbsp;&nbsp; Class &nbsp;&nbsp;&nbsp;&nbsp; The first few entries
 
 ## Dates | Coding Data
 
@@ -301,6 +328,7 @@ library(lubridate)
 dmy("16/02/1985")
 mdy("Feb 16 1985")
 ymd("1985-February 16")
+
 ```
     
 ```{r, echo = F, comment = NA}
@@ -327,6 +355,8 @@ format(tki_demo$dob, "%d %b %Y") %>%
 
 ```
 
+See `?strptime` for more date and time formatting options (also on next slide).
+
 ## Formatting Date/Time
 
 <div class="small_table"></div>
@@ -347,10 +377,20 @@ format(tki_demo$dob, "%d %b %Y") %>%
 
 # Cleaning and Data Wrangling
 
-## High Level Data Summary
+## High Level Data Summary | Base R Syntax
 
 ```{r summary_data, comment = NA, class = "small"}
 summary(tki_demo[, c("male", "day1", "day2", "day3")])
+
+```
+
+## High Level Data Summary | Tidyverse Syntax
+
+```{r summary_data_tidy, comment = NA}
+tki_demo %>%
+  summarise_at(c("male", "day1", "day2", "day3"),
+               mean,
+               na.rm = T)
 
 ```
 
@@ -361,9 +401,9 @@ library(dplyr)
 
 ```
 
->- Allows a constant flow of data from one function to the next
->- The output data of the previous function is generally assumed to be the first argument
->- Helpful to think of <code>dplyr</code> as a series of verbs that are piped together
+* Allows a constant flow of data from one function to the next
+* The output data of the previous function is generally assumed to be the first argument
+* Helpful to think of `dplyr` as a series of verbs that are piped together
 
 ```{r, eval = F}
 Data frame %>% filter() %>% select() %>%
@@ -478,6 +518,15 @@ tki_demo %>%
 
 Data can be joined on multiple columns that can have different names.
 
+## The Different Joins
+
+```{r, echo = F, out.extra = "figure", out.width = "500px"}
+include_graphics("assets/images/joins.png")
+
+```
+
+* http://www2.stat.duke.edu/~cr173/Sta523_Fa15/gis.html
+
 ## Combining Multiple Data Sources | Join
 
 ```{r join_2, echo = F, comment = NA}
@@ -540,12 +589,40 @@ tki_demo %>%
 
 ```
 
+## "Pasting" Text Columns
+
+```{r pasting, eval = F, comment = NA}
+tki_demo %>%
+  group_by(intervention, smoker) %>%
+  summarise(mean = mean(day1, na.rm = T),
+            sd = sd(day1, na.rm = T)) %>%
+  mutate(mean = sprintf(mean, fmt = '%#.2f'),
+         sd = sprintf(sd, fmt = '%#.2f'),
+         text = paste0(mean, " (", sd, ")")) %>%
+  select(-(smoker:sd))
+  
+```
+
+## "Pasting" Text Columns
+
+```{r, echo = F, comment = NA}
+tki_demo %>%
+  group_by(intervention, smoker) %>%
+  summarise(mean = mean(day1, na.rm = T),
+            sd = sd(day1, na.rm = T)) %>%
+  mutate(mean = sprintf(mean, fmt = '%#.2f'),
+         sd = sprintf(sd, fmt = '%#.2f'),
+         text = paste0(mean, " (", sd, ")")) %>%
+  select(-(smoker:sd))
+  
+```
+
 # Reshaping Data
 
 ## The `tidyr` package
 
->- Pivot functions Replace `gather()` and `spread()`
->- Brand new feature in `tidyr`, if these don't work, you might need to install
+* Pivot functions Replace `gather()` and `spread()`
+* Brand new feature in `tidyr`, if these don't work, you might need to install
 from GitHub.
 
 ```{r, eval = F, comment = NA}
@@ -556,8 +633,8 @@ library(tidyr)
 
 ## `pivot_longer()`
 
->- `pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns
->- The inverse transformation is `pivot_wider()`
+* `pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns
+* The inverse transformation is `pivot_wider()`
 
 `pivot_longer(data, cols, names_to = "name")`
 
@@ -565,13 +642,16 @@ library(tidyr)
 
 ```{r pivot_longer, comment = NA}
 tmp <- tki_demo %>%
-  pivot_longer(cols = starts_with("day"), # i.e. c("day1", "day2", "day3")
+  pivot_longer(cols = starts_with("day"),
                names_to = "day",
                values_to = "score",
-               names_prefix = "day", # regular expression to remove matching text
+               names_prefix = "day",
                names_ptypes = list(day = integer()))
 
 ```
+
+* `starts_with()` will select c("day1", "day2", "day3")
+* `names_prefix` uses a regular expression to remove text
 
 ## `pivot_longer()`
 
@@ -583,10 +663,21 @@ tmp %>%
 
 ## `pivot_wider()`
 
->- `pivot_wider()` "widens" data, increasing the number of columns and decreasing the number of rows
->- The inverse transformation is `pivot_longer()`
+* `pivot_wider()` "widens" data, increasing the number of columns and decreasing the number of rows
+* The inverse transformation is `pivot_longer()`
 
-```{r pivot_wider, comment = NA}
+```{r pivot_wider, eval = F, comment = NA}
+tmp %>%
+  pivot_wider(names_from = day,
+              values_from = score,
+              names_prefix = "day") %>%
+  head()
+
+```
+
+## `pivot_wider()`
+
+```{r, echo = F, comment = NA}
 tmp %>%
   pivot_wider(names_from = day,
               values_from = score,
@@ -597,10 +688,21 @@ tmp %>%
 
 ## `unite()`
 
->- Each cell should contain only 1 piece of data
->- The treatment column has day and drug type separated by a "."
+* Each cell should contain only 1 piece of data
+* The treatment column has day and drug type separated by a "."
 
-```{r unite, comment = NA}
+```{r unite, eval = F, comment = NA}
+united <- tmp %>%
+  unite("treatment", day, intervention, sep = ".")
+
+united %>%
+  head()
+
+```
+
+## `unite()`
+
+```{r, echo = F, comment = NA}
 united <- tmp %>%
   unite("treatment", day, intervention, sep = ".")
 
@@ -611,7 +713,7 @@ united %>%
 
 ## `separate()`
 
->- Lets fix this and put day and drug type in their place
+* Lets fix this and put day and drug type in their place
 
 ```{r separate, comment = NA}
 united %>%
@@ -630,11 +732,11 @@ united %>%
   <footer class="blockquote-footer">Wikipedia</footer>
 </blockquote>
 
->- Cheatsheet: <http://www.rexegg.com/regex-quickstart.html>
+* Cheatsheet: <http://www.rexegg.com/regex-quickstart.html>
 
 ## The `stringr` package
 
->- `library(stringr)`
+* `library(stringr)`
 
 <div class="columns-2">
   - `str_detect(x, pattern)`
@@ -718,6 +820,21 @@ tki_demo %>%
 
 ```
 
+## Applying Functions | mutate_if
+
+```{r, eval = F, comment = NA}
+tki_demo %>%
+  select(-dob) %>%
+  mutate_at(intervention:day3),
+            list(~square(.))) %>%
+  head(4)
+
+```
+
+    Error: unexpected ',' in:
+    "  select(-dob) %>%
+      mutate_at(intervention:day3),"
+
 ## Applying Functions Subset Data
 
 ```{r function_split, eval = F}
@@ -737,10 +854,10 @@ tki_demo %>%
 
 ## Applying Functions Subset Data
 
->- <code>lapply()</code> can *easily* be parallelised for multi-core computing
->- *x* is each split element of the data frame, which gets acted on one at a time
+* `lapply()` can *easily* be parallelised for multi-core computing
+* *x* is each split element of the data frame, which gets acted on one at a time
 the last item is returned
->- <code>bind_rows()</code> combines split data back into a single data frame.
+* `bind_rows()` combines split data back into a single data frame.
 
 ## Applying Functions Subset Data
 
@@ -758,3 +875,14 @@ tki_demo %>%
   head()
 
 ```
+
+## Topics Covered in This Session
+
+* Tidyverse
+* Introduction to Data Manipulation
+* Reading In Data
+* Data Classes
+* Cleaning and Data Wrangling
+* Summarising Data
+* Text analysis
+* Functions in R

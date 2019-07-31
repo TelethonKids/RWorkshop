@@ -11,26 +11,21 @@ em {
   font-style: italic;
 }
 
-.center {
+.centre {
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
 .col2 {
-  columns: 2 200px;         /* number of columns and width in pixels*/
   -webkit-columns: 2 200px; /* chrome, safari */
   -moz-columns: 2 200px;    /* firefox */
+  columns: 2 200px;         /* number of columns and width in pixels*/
 }
 .col3 {
-  columns: 3 100px;
   -webkit-columns: 3 100px;
   -moz-columns: 3 100px;
-}
-
-.fullslide img {
-  margin-top: -5px;
-  margin-left: -5px;
+  columns: 3 100px;
 }
 
 .footer-logo img {
@@ -43,8 +38,8 @@ em {
 
 .footer-strip {
   position: absolute;
-  left: 0px;
-  bottom: 0px;
+  left: 0;
+  bottom: 0;
   width: 100%;
   height: 50px;
 }
@@ -62,13 +57,13 @@ em {
   font-size: 0.8em;
 }
 
-div.small_table + table tr td {
+.small_table + table tr td {
   font-size: 0.7em;
   padding: 3px;
 }
 
 .prettyprint {
-  left: 0px;
+  left: 0;
   width: 100%;
   padding: 10px;
 }
@@ -94,45 +89,31 @@ hgroup {
 }
 
 article {
-  margin-left: 45px;
+  margin-left: 50px;
   width: 80%;
 }
 
 slide::after {
-  position: absolute !important;
-  left: 100px !important;
-  bottom: 80px !important;
-}
-
-.title-slide {
-  background-color: #6CACE4;
+  position: absolute;
+  left: 20px;
+  top: 88%;
 }
 
 .title-container {
   position: absolute;
   top: 40px;
-  left: 0px;
+  left: 0;
   width: 75%;
 }
 
-.title-container h1 {
-  color: white !important;
-  font-weight: bold !important;
-}
-
-.title-container h2 {
-  color: white !important;
-  font-weight: bold !important;
-}
-
 .title-container p {
-  color: white !important;
-  font-weight: bold !important;
+  color: #53565A;
+  font-weight: bold;
 }
 
 .gdbar img {
-  width: 267px !important;
-  height: 199px !important;
+  width: 187px;
+  height: 139px;
 }
 
 .gdbar p {
@@ -146,9 +127,8 @@ slide::after {
   display: inline-block;
   position: absolute;
   left: 50px;
-  right: 50px;
+  right: 200px;
   bottom: 40px;
-  background-color: white;
 }
 
 .middle {
