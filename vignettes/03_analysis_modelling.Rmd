@@ -1,6 +1,6 @@
 ---
 title: "RStudio Workshop"
-subtitle: "Linear Regression"
+subtitle: "Statistical modelling in R"
 author: Sebastian Rauschert
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
@@ -39,6 +39,7 @@ data(iris)
 
 order of included R functions:
 
+
 >- <code>lm()</code>  
 >- <code>summary()</code>  
 >- <code>ggplot() + statqq()</code>  
@@ -55,24 +56,27 @@ order of included R functions:
 >- Multiple Linear Regression 
 >- Logistic Regression
 
+
+>- Linear Regression
+>- Multiple Linear Regression 
+>- Generalized Linear Models
+>- Briefly: Mixed effects model
 ```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, out.extra = 'class="centre" style="width: 500px;"', warnings=FALSE}
 setwd("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/")
 tki_demo <- read_csv("data/demo.csv")
-
 tki_demo %>%
   filter(day2 < 100) %>%
   
-
 ggplot( aes(day2, day3)) +
   labs(title = "TKI Dataset", x = "day1", y = "day2") +
   geom_point(size = 4) +
-  geom_smooth(method='lm')+
+  geom_smooth(method = 'lm')+
   scale_color_telethonkids("light") +
   theme_minimal()
-
 ```
 
 # Linear Regression
+
 
 ## Linear Regression in R 
 
@@ -85,7 +89,11 @@ The command in R for a linear model is <br/>
   
   <code style="aligne:center">lm(y~x)</code>.
 
-**y** is the outcome variable that interests us and **x** is the variable that we want to test in its association with **y**
+
+
+
+This is called the _formula notation_ in R. 
+
 
 ## Example: 
 ## Data set summary
@@ -99,117 +107,122 @@ summary(tki_demo[,c(6:8)])
 ```
 
 # Visualisation of data distributions
+
+
 ## Helpful plots before modelling
 Before we start with the linear regression model, we need to get an idea of the underlying data and its distribution.
 We know that the linear regression has the assumtptions:
 
+
 -
+
 
 
 ## QQ-plot: {.smaller}
 ```{r, echo=TRUE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
 tki_demo %>%
+
   filter(day2 < 100) %>%
   gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
   ggplot( aes(sample=measurement, color=Days)) + stat_qq() + facet_wrap(~Days)
 
+
 ```
 
+
 ## Boxplots to check for outliers
-
-
 ```{r echo = FALSE, out.extra = 'class="centre" style="width: 700px;"',warning=FALSE}
-
 with_out <- tki_demo %>%
   #filter(day2 < 100) %>%
-  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
-  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  gather(Days, measurement, day1:day3, factor_key = TRUE) %>%
+  ggplot(aes(y = measurement,x = Days, fill = Days)) +
   labs(title = "Days: 1 to 3 with outlier", x = "", y = "Measurment") +
   geom_boxplot() +
   scale_color_telethonkids("light") +
   theme_minimal()
-
 no_out <- tki_demo %>%
   filter(day2 < 100) %>%
   gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
-  ggplot(aes(y=measurement,x=Days, fill=Days)) +
+  ggplot(aes(y = measurement,x = Days, fill = Days)) +
   labs(title = "Days: 1 to 3 outlier removed", x = "", y = "Measurment") +
   geom_boxplot() +
   scale_color_telethonkids("light") +
   theme_minimal()
-
-
-ggarrange(with_out, no_out, ncol=2, common.legend = TRUE, legend=FALSE )
-
+ggarrange(with_out, no_out, ncol = 2, common.legend = TRUE, legend = FALSE )
 ```
 
 
 ## Plot the variables
 
 ```{r, echo = FALSE, out.extra = 'class="centre" style="width: 700px;"',warning=FALSE}
-data(iris)
-plot1 <- ggplot(iris, aes(Petal.Width, Petal.Length)) +
-  labs(title = "Petal", x = "Petal Width", y = "Petal Length") +
+plot1 <- 
+  tki_demo %>%
+  filter(day2 < 100) %>%
+  ggplot( aes(day1, day2)) +
+  labs(title = "Day's 1 and 2", x = "Day 1", y = "Day 2") +
   geom_point(size = 4) +
-  geom_smooth(method='lm')+
+  geom_smooth(method = 'lm')+
   scale_color_telethonkids("light") +
   theme_minimal()
-
-plot2 <- ggplot(iris, aes(Sepal.Width, Sepal.Length)) +
-  labs(title = "Sepal", x = "Sepal Width", y = "Sepal Length") +
+plot2 <- 
+ tki_demo %>%
+  filter(day2 < 100) %>%
+  ggplot(aes(day2, day3)) +
+  labs(title = "Day's 2 and 3", x = "Day 2", y = "Day 3") +
   geom_point(size = 4) +
-  geom_smooth(method='lm')+
+  geom_smooth(method = 'lm')+
   scale_color_telethonkids("light") +
   theme_minimal()
-
-plot3 <- ggplot(iris, aes(Petal.Width, Sepal.Width)) +
-  labs(title = "Petal and Sepal", x = "Petal Width", y = "Sepal Width") +
+plot3 <- ggplot(tki_demo, aes(day1, day3)) +
+  labs(title = "Day's 1 and 3", x = "Day 1", y = "Day 3") +
   geom_point(size = 4) +
-  geom_smooth(method='lm')+
+  geom_smooth(method = 'lm')+
   scale_color_telethonkids("light") +
   theme_minimal()
-
-plot4 <- ggplot(iris, aes(Petal.Length, Sepal.Length)) +
-  labs(title = "Petal and Sepal", x = "Petal Length", y = "Sepal Length") +
-  geom_point(size = 4) +
-  geom_smooth(method='lm')+
-  scale_color_telethonkids("light") +
-  theme_minimal()
-
-grid.arrange(plot1, plot2, plot3, plot4, nrow=2, ncol=2)
-
+grid.arrange(plot1, plot2, plot3, nrow = 2, ncol = 2)
 ```
+
+# Linear Regression
+
+## The <code style="color:tomato;">lm()</code> function
+
 
 # Linear Regression
 
 ## The <code>lm()</code> function
 
 In the plots, we could already see, that <em>petal length</em> and <em>petal width</em> seem to be associated. This is obvious when drawing a line in the plot.
+
 Let's now perform a linear regression model in R.
 
-<code>lm(Petal.Length~Petal.Width, data=iris)</code>
+<code style="color:tomato;">lm(day2 ~ day3, data = tki_demo)</code>
 
-- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>Petal.Length</em>**.
+- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>day2</em>**.
 
-- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>Petal.Width</em>**.
+- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>day3</em>**.
 
 - We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
 
 ## Linear Regression Results
+
 Now we want to look at the results of the linear regression. So how do we get the <em>p-value</em> and <em>\(\beta\)-coefficient</em> for the association?
 
-In R, we add the <code>summary()</code> function to the <code>lm()</code> function, like so:
+In R, we add the <code style="color:tomato;">summary()</code> function to the <code style="color:tomato;">lm()</code> function, like so:
 
-<code>summary(lm(y~x, data=data))</code>
+<code style="color:tomato;">summary(lm(y ~ x, data = data))</code>
+
+We can also store our model results in a variable:  
+<code style="color:tomato;">model1 <- lm(y ~ x, data = data)</code>, and then use summary: <code style="color:tomato;">summary(model1)</code>
 
 ## Example Results {.smaller}
 
 ```{r, message=FALSE,  warning=FALSE, error=FALSE, echo = FALSE,out.extra = 'class="centre" style="width: 500px;"'}
 #summary(lm(Petal.Length~Petal.Width, data=iris))
-lm1 <- lm(Petal.Length~Petal.Width, data=iris)
+lm1 <- lm(day1 ~ day3, data = tki_demo)
 library(sjPlot)
 #tab_model(lm1, file="output.html")
 summary(lm1)
+
 ```
 # <code>jtools</code> and <code>broom</code>
 
@@ -241,20 +254,24 @@ library(broom)
 library(knitr)
 theme_set(theme_classic())
 
-model <- lm(Petal.Length~Petal.Width, data=iris)
 
-model.diag.metrics <- augment(model)
-kable(as.matrix(head(model.diag.metrics)), format='markdown')
+## Improving the accessibility of the <code style="color:tomato;">lm()</code> results
+
+>- The output before contains a lot of relevant information, but it is not straighforward to access the individual parameters like p-values and betas.
+>- The <code style="color:tomato;">broom</code> R package is in line with the "tidy" data handling in R and turns the linear model results into an easy accessible tibble format:
+```{r}
+tidy(lm1)
 ```
-</div>
 
 
-After running the linear regression, we need to test the quality of the model. At first, we look at the <b>R<sup>2</sup></b> statistic.
-The <b>R<sup>2</sup></b> statistic is a measure of how much variance in the data was explained by our model. 
+## Improving output style {.smaller}
 
-<br></br>
+>- The <code style="color:tomato;">broom</code> package helps with the accessibility of the output, but the style of the output is not very appealing for a publiation or a report. 
+>- The <code style="color:tomato;">jtools</code> package helps with this and has other nice functionalities such as forrest plots for coefficients and confidence intervals:
+```{r results = 'asis'}
+export_summs(lm1)
+```
 
-The <b>R<sup>2</sup></b> statistic ranges from 0 to 1, where 1 means the model explains 100% of the variance. This means the model fits the data perfectly.
 
 
 ## Diagnostic Plots {.smaller}
@@ -266,7 +283,11 @@ autoplot(model)
 
 
 
+## Diagnostic Plots {.smaller}
 
+```{r, echo=TRUE, warning=FALSE, error=FALSE}
+autoplot(model)
+```
 
 
 <div align="center">
@@ -275,17 +296,18 @@ ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
   geom_point() +
   stat_smooth(method = lm, se = FALSE) +
   geom_segment(aes(xend = Petal.Length, yend = .fitted), color = "red", size = 0.3)
-
 ```
 </div>
 
 # Multiple Linear Regression
 ## How to? {.smaller}
+
 Multiple linear regression works with the same function inR : <code>lm(y ~ x + covar1 + covar2 + ... + covarx , data=data)</code>
 The R standard output is also very messy for reports, but helps with a first visual inspection in the command line:
 
 ```{r}
 summary(lm(day3 ~ day2 + male + intervention, data=tki_demo))
+
 ```
 
 ## Example 1: one model {.smaller}
@@ -301,9 +323,11 @@ lm1 <- lm(day3 ~ day2, data = tki_demo)
 lm2 <- lm(day3 ~ day2 + male + smoker, data = tki_demo)
 export_summs(lm1, lm2)
 ```
+
 ## Forrest plot to compare coefficients in the model
 Often we want to visualise the coefficients in the model to see their impact on the outcome, or visualise the coefficient of specific variable in two models, that differ only in the adjusted covariates. The <code>jtools</code> package has a nice function to do this very easily, utilising <code>ggplot2</code>:  
 <code>plot_summs()</code>
+
 
 ## Example 1: one model
 
@@ -320,11 +344,14 @@ plot_summs(lm1, lm2)
 ## Example 3: compare specific coefficients
 
 ```{r}
+
 plot_summs(lm1, lm2, coefs="day2")
+
 ```
 
 
 ## Getting more info: Confidence Intervalls {.smaller}
+
 With <code>jtools</code> we can access more information from the model in an easier step. Here, we access the confidence intervall and variance inflation factor (for multicollinearity testing), but leave out the p-values:
 
 ```{r}
@@ -332,4 +359,5 @@ summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE, confint = TRUE, pvals = F
 ```
 
 # Logistic regression
+
 

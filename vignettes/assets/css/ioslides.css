@@ -28,6 +28,11 @@ em {
   -moz-columns: 3 100px;
 }
 
+.fullslide img {
+  margin-top: -5px;
+  margin-left: -5px;
+}
+
 .footer-logo img {
   width: 160px;
   height: 120px;
