@@ -1,5 +1,5 @@
 ---
-title: "R-Fundamentals"
+title: "Part 1: R-Fundamentals"
 subtitle: "RWorkshop - Biometrics"
 author: Matt Cooper, Paul Stevenson, Sebastian Rauschert
 date: August 08, 2019
@@ -31,7 +31,7 @@ tki_demo <- data.frame(tki_demo)
 - How to get setup and use R
 - Fundamentals of R
     - Basic syntax
-    - Data classes and structures <mark>**[Main Section]**</mark>
+    - **Data classes and structures** <mark>**[Main Section]**</mark>
     - Reading data in
     - Installing/loading packages
 - Staying up-to-date in R/further reading
@@ -183,13 +183,18 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
 
 ## RStudio IDE
 
+```{r, echo = F, out.extra = "figure", out.width = "75%", fig.align='center'}
+knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
+```
+
+## RStudio IDE
+
 ```{r, echo = F, out.extra = "figure", out.width = "100%", fig.align='center'}
 knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide3_large.png"))
 ```
 
-# R - Fundamentals of R
-
 # Basic syntax 
+
 ## Basic syntax - assign
 
 - Assign '<code><-</code>'
@@ -202,7 +207,6 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide3_large.png
 - You can use '<code>=</code>' in place of '<code><-</code>'
 - Typically we only use '<code>=</code>' within brackets
     - It's complicated and related to environments (scoping)
-
 
 ## Basic syntax - operations
 
@@ -246,11 +250,11 @@ c("one", "two", "three")[2]
     - groups multiple <mark>lines of code</mark> 
     - typically used when creating functions
 
-```{r echo = F}
-told_ya <- function(x){
+```{r echo = T}
+facts_about <- function(x){
   paste0(x, " is awesome")
 }
-told_ya("matt")
+facts_about("matt")
 ```
 
 ## Basic syntax - other
@@ -368,10 +372,10 @@ class(x)
 ## Classes - numeric (integer/double)
 
 ```{r}
-x + 0.4
+x <- as.integer(3.1); x + 0.4
 class(x + 0.4)
 ```
-- Notice the decimal has dropped off
+- Notice the decimal is really gone (not in memory)
 
 ## Classes - factor
 
@@ -388,6 +392,11 @@ class(x + 0.4)
 ```{r}
 y <- c("Cat", "Other", "Dog", "Dog"); y
 class(y)
+```
+
+## Classes - factor
+
+```{r}
 y <- as.factor(c("Cat", "Other", "Dog", "Dog")); y
 ```
 
@@ -398,39 +407,17 @@ y <- as.factor(c("Cat", "Other", "Dog", "Dog")); y
 ```{r}
 class(y); levels(y)
 ```
+
 ## Classes - factor
 
 ```{r}
-y <- y[-1]  # get rid of the cat
+y <- y[-1]; y  # get rid of the cat
 table(y)
-y <- as.factor(y); levels(y)
-y <- factor(y); levels(y)
 ```
 
 ## Classes - factor
 
-- review <code>?factor</code>
-- <code>as.factor()</code> does not accept additional arguments
-    - see <code>levels</code> defaults.
-- <code>relevel</code> lets you set the 'baseline' level
-    - very handy for modeling
-
-## Classes - factor - PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE
-
 ```{r}
-class(tki_demo$intervention)
-table(tki_demo$intervention)
-levels(tki_demo$intervention)      
-levels(factor(as.character(tki_demo$intervention)))
-```
-
-## Classes - factor - PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE PROBABLY REMOVE
-
-```{r}
-y <- tki_demo$intervention[1:5]
-y           # retained class and levels
-y <- y[-5]  # get rid of the 'Drug 1'
-table(y)
 y <- as.factor(y); levels(y)
 y <- factor(y); levels(y)
 ```
@@ -468,6 +455,8 @@ F + F + NA
 T + NA + T
 ```
 
+## Classes - logical
+
 ```{r error = T}
 F + F + F
 ```
@@ -476,12 +465,14 @@ F + F + F
 T + T + T
 ```
 
-Oh!
+```{r error = T}
+sum(T, F, T)
+```
 
 ## Classes - logical
 
 ```{r error = T}
-table(y)
+y <- c(TRUE, FALSE, TRUE, FALSE, FALSE); table(y)
 sum(y)
 ```
 
@@ -490,6 +481,11 @@ sum(y)
 ```{r error = T}
 all(c(T, NA, T))
 all(c(F, NA, F))
+```
+
+## Classes - logical
+
+```{r error = T}
 any(c(T, NA, T))
 any(c(F, NA, F))
 all(c(T, F, T))
@@ -524,11 +520,14 @@ On input, values 00 to 68 are prefixed by 20 and 69 to 99 by 19...</code>
 
 ## Classes - date
 
-- Note the structure
-
 ```{r}
 Sys.Date()
 ```
+
+- Note the structure
+- YYYY-MM-DD
+
+## Classes - date
 
 ```{r}
 class(as.Date("2019-01-31"))
@@ -544,11 +543,12 @@ class(as.Date("31.01.2019"))
 
 ## Classes - date
 
-```{r}
+```{r error = T}
+class(as.Date("31.01.2019"))
 class(as.Date("31.01.2019", format = "%d.%m.%Y"))
 ```
 
-## Classes - date
+## Classes - date | lubridate
 
 - <code>library(lubridate)</code>
 
@@ -558,8 +558,18 @@ library(lubridate); class(dmy("31.01.2019"))
 
 - complex (powerful?) new classes
     - <code>duration</code>, <code>interval</code>, <code>period</code>
+    
+## Classes - date | lubridate  
+    
 ```{r}
-round(interval(ymd("1983-10-16"), Sys.Date()) / years(1), 2)
+x <- round(interval(ymd("1983-10-16"), Sys.Date()) / years(1), 2)
+x
+class(x)
+```
+
+## Classes - date | lubridate  
+
+```{r}
 as.duration(interval(ymd("1983-10-16"), Sys.Date()))
 as.period(interval(ymd("1983-10-16"), Sys.Date()))
 ```
@@ -573,8 +583,12 @@ as.period(interval(ymd("1983-10-16"), Sys.Date()))
 - Some structures are a <code>class</code> within R
 - But not all 
 
+## Structures - single element
+
 Single element (scalar typically)
+
 - most basic building block
+- a cell
 
 ```{r}
 i <- 1
@@ -587,14 +601,25 @@ i <- 1
 - a <code>vector</code> HAS a class, and it can have only one! (remember the hierarchy)
 - the power of R, is vectorised processing 
 
-## Structures - vector
+## Structures - vector | we've already seen a lot!
 
 ```{r error = T}
-x <- c(3,4,5,6,8) # c stands for combine/concatenate
+x <- c(3, 4, 5, 6, 8) # c stands for combine/concatenate
 x
 x + 2
+```
+
+## Structures - vector | we've already seen a lot!
+
+```{r error = T}
+x <- c(3, 4, 5, 6, 8) # c stands for combine/concatenate
 length(x)
 sum(x)
+```
+
+## Structures - vector | we've already seen a lot!
+
+```{r error = T}
 y <- c("Cat", "Dog", "Other", "Dog")
 length(y)
 sum(y)
@@ -631,6 +656,11 @@ dim(tki_demo)
 
 ```{r}
 head(tki_demo) # can you guess what tail does?
+```
+
+## Demonstration data set(s)
+
+```{r}
 names(tki_demo)
 ```
 
@@ -649,7 +679,6 @@ summary(tki_demo[, 1:4])
 ## Structures - data.frame
 
 ```{r}
-head(tki_demo)
 tki_demo[1:2 , 1:3]
 tki_demo[1 , 1]
 ```
@@ -658,29 +687,42 @@ tki_demo[1 , 1]
 
 ```{r error = T}
 tki_demo$day1[1:10]
-tki_demo$index <- 1:10
+```
+
+## Structures - data.frame
+
+```{r error = T}
 tki_demo$index <- 1:nrow(tki_demo)
-head(tki_demo)
+head(tki_demo[ , c(1, 2, 3, ncol(tki_demo))])
 ```
 
 ## Structures - tibble
 
 - a <code>tibble</code> is the <code>data.frame</code> of the <mark>tidyverse</mark>
-- broady the same as a <code>data.frame</code>, but less unruly (print)
+- broady the same as a <code>data.frame</code>, but less unruly
 
 ```{r echo = T}
-load("../data/dat.RData"); head(tki_demo, 3)
+load("../data/dat.RData")
 ```
 
 ## Structures - tibble
 
 ```{r echo = T}
-head(tki_demo, 2)
+tki_demo
 ```
 
-- Given the dimensions by default
-- Given the column classes by default
-- Control printing (won't blow out your console)
+## Structures - tibble
+
+- We're told it's a tibble!
+- Given the dimensions by default!
+- Given the column classes (str) by default!
+- Controled printing (won't blow out your console)
+
+## Structures - tibble
+
+```{r echo = T}
+tki_demo
+```
 
 ## Structures - list
 
@@ -689,6 +731,9 @@ head(tki_demo, 2)
 - Lists can be used to keep related things together rather than as separate objects
     - If you had a <code>data.frame</code> of data for each calendar
     - You can apply operations to call calendar years at the same time
+    
+## Structures - list
+
 - Lists can be good for collecting output (complex elements) from a loop
     - Model output from running a model on multiple imputed datasets
 
@@ -700,9 +745,10 @@ tki_list <- list(tki_demo,
 class(tki_list)
 ```
 
+## Structures - list
+
 ```{r}
-head(tki_list[[1]], 2) # access the first element 
-head(tki_list[[2]], 2) # access the second element 
+head(tki_list[[1]], 2); head(tki_list[[2]], 2) # access elements 
 ```
 
 ## Structures - list
@@ -710,7 +756,7 @@ head(tki_list[[2]], 2) # access the second element
 - why? efficiency!
 
 ```{r}
-lapply(tki_list, head, 2)
+lapply(tki_list, head, 1)
 ```
 
 ## Structures - other
@@ -718,7 +764,7 @@ lapply(tki_list, head, 2)
 **Matrix *(2-dimensions)* **
 
 - A grid like structure (similar to <code>data.frames</code>)
-- Entire strucutre is one class (all <code>numeric</code> or <code>character</code> etc)
+- Entire structure is one class (all <code>numeric</code> or <code>character</code> etc)
 - Can not use <code>$</code> for referencing columns (<code>[ , ]</code> used) 
 
 **Array *(n-dimensions)* **
@@ -727,15 +773,16 @@ lapply(tki_list, head, 2)
 
 *beyond the scope of this level - computational efficiency*
 
-# Reading data in
+# Reading and saving data
 ## Reading data in
 
 - The function you use depends on your file type
 - Flat files (plain text files) (<code>.csv, .txt</code>) can be read in with base functions
     - <code>read.csv()</code> and <code>read.table()</code> are commonly use
-- Other files require specific packages (next topic)
+- Other files require functions from additional packages *(next topic)*
     - The <mark>readxl</mark> package reads in (<code>.xlx, .xlsx</code>) excel files via <code>read_excel()</code>
     - The <mark>foreign</mark> and <mark>haven</mark> packages read in SPSS, Stata, and SAS files
+- Tidyverse
 
 ## Reading data in - arguments
 
@@ -755,10 +802,11 @@ dat <- read.csv("/DIRECTORY/my_data_file.csv", header = T, na.strings = c("NOT C
 or
 
 <code>
-dat <- read.csv("../data/my_data_file.csv", header = T, na.strings = c("NOT CONTACTED"))
+dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", header = T, na.strings = c("NOT CONTACTED"))
 </code>
 
 - This will load the csv file into a <code>data.frame</code> called <code>dat</code>
+- <code>getwd()</code> and <code>setwd()</code>
 - Ensure path is valid (shared drives)
 
 ## Reading data in - considerations
@@ -771,91 +819,85 @@ dat <- read.csv("../data/my_data_file.csv", header = T, na.strings = c("NOT CONT
 
 ## Reading data in - considerations
 
-- A single character in a column that isn't <code>0-9</code> or <code>.</code> will mean that column is read in as <code>character</code>
+- A single character in a column that isn't <code>0-9</code> or <code>.</code> will typically mean that column is read in as <code>character</code>
 - You can load data directly from the web
     - <code>read.csv("http://some.where.net/data/foo.csv")</code>
     - You can use <code>readHTMLTable</code> from the <mark>XML</mark> package to read tables off websites
 
+## Saving within R
+
+- Save all scripts (<code>.R, .Rmd</code>) so you can regenerate your results directly from the original data files
+- Saving your <mark>workspace</mark> is commonly done
+    - This will include everything within your current session (/environment)
+        - All datasets, model output, custom functions, settings changes - but not loaded libraries
+- Saved via: <code>save.image("my_session.Rdata")</code>
+- Loaded via: <code>load("my_session.Rdata")</code>
+
+## Saving within R
+
+- Save specific (individual) structures/objects on their own (not so commonly done)
+    - Saved via: <code>saveRDS(dat, "my_data_frame.RDS")</code>
+    - Loaded via: <code>readRDS("my_data_frame.RDS")</code>
+- Exporting data via write commands
+    - Export via: <code>write.csv(dat, "my_csv_export.csv")</code>
+    - Commonly used arguments include <code>row.names = F</code> and <code>na = ""</code>
+- Recommend 
+    - <code>write.csv(d, <span style="color:red">paste0(Sys.Date(), </span>"_dat.csv"))</code>
+
 # Installing/loading packages
+
 ## Packages - overview
 
 - Packages can be thought of as 'bundles of functions'
     - They can contain datasets and other things too
 - They extend the functionality of R
     - New graphing abilities, modeling methods, faster data manipulation 
-- It's very common for scripts to start by calling many packages
+- It's very common for scripts to begin with code loading many packages
 - Require semi-regular updating (easy)
+- **Beware** of loading packages part-way through a script/session
 
 ## Packages - installing and loading
 
 - Installed via: <code>install.packages("ggplot2")</code>
-    - note the quote marks
+    - *note the quote marks*
     - by default, this will also install that packages <mark>dependencies</mark> 
 - Packages loaded for use via: <code>library(ggplot)</code>
-    - note the lack of quote marks
+    - *note the lack of quote marks*
 - Updated via: <code>updated.packages()</code>
-    - considered using '<code>ask = T</code>'
+    - considered using '<code>ask = F</code>'
 
 ## Packages - installing and loading
 
 - Some packages are installed direct from the developer
-    - Tnstalled via <code>devtools::install_github()</code>
-    - That is, using the <code>install_github()</code> function within the <code>devtools</code> package
+    - Installed via <code>remotes<span style="color:red">::</span>install_github()</code>
+    - That is, using the <code>install_github()</code> function within the <code>remotes</code> package
 - Our package is installed this way
-    - <code>devtools::install_github("TelethonKids/biometrics", build_vignettes = TRUE)</code>
+    - <code>remotes::install_github("TelethonKids/biometrics", build_vignettes = TRUE)</code>
 
 ## Packages - citing and more
 
-- Running <code>.libPaths()</code> will show where (on your computer) your packages are stored
-- Running <code>citation("ggplot2")</code> will tell you how to cite the package
+- <code>.libPaths()</code> will show where (on your computer) your packages are stored
+- <code>citation("ggplot2")</code> will tell you how to cite the package
 - Beware of clashes
-    - packages overiding base functions, or two packages with the same function
-    - not overly common, and you will get warned
+    - packages overiding base functions, or two packages using the same name for different functions
+        - *not overly common, and you will get warned*
 - Help file will tell you what package a function resides in
-    - <code>?geom_path</code> starts (top left) with <code>geom_path {ggplot2}</code>
-
-## Saving within R
-
-- Save all scripts (<code>.R, .Rmd</code>) so you can *always regenerate your results from your original data files
-- Saving your <mark>workspace</mark> is commonly done
-    - This will include *everything within your current session (/environment)
-    - All datasets, model output, custom functions, settings changes - but not loaded libraries
-- Saved via: <code>save.image("my_session.Rdata")</code>
-- Loaded via: <code>load("my_session.Rdata")</code>
-
-## Saving within R
-
-- Save specific (individual) structures/object on their own (not commonly done)
-    - saved via: <code>saveRDS(dat, "my_data_frame.RDS")</code>
-    - loaded via: <code>readRDS("my_data_frame.RDS")</code>
-- Exporting data via write commands
-    - export via: <code>write.csv(dat, "my_csv_export.csv")</code>
-    - commonly used arguments include <code>row.names = F</code> and <code>na = ""</code>
+    - <code>?geom_path</code> starts (top left) with '<code>geom_path {ggplot2}</code>'
 
 # Staying up-to-date in R
 
 ## Further reading
 
-- R-bloggers [https://www.r-bloggers.com/](https://www.r-bloggers.com/)
-- Stackoverflow [https://stackoverflow.com/questions/tagged/r](https://stackoverflow.com/questions/tagged/r)
-- Twitter #rstats [https://twitter.com/search?q=%23rstats](https://twitter.com/search?q=%23rstats)
-- UCLA's educational resources [https://stats.idre.ucla.edu/other/dae/](https://stats.idre.ucla.edu/other/dae/)
-- Hadley resources 
-- Coding style guides
+- R-bloggers [www.r-bloggers.com/](https://www.r-bloggers.com/)
+- RStudio's resources [www.rstudio.com/resources](https://www.rstudio.com/resources) 
+    - and /cheatsheets
+- Stackoverflow [www.stackoverflow.com/questions/tagged/r](https://stackoverflow.com/questions/tagged/r)
+- Twitter #rstats [www.twitter.com/search?q=%23rstats](https://twitter.com/search?q=%23rstats)
+- UCLA's  resources [www.stats.idre.ucla.edu/other/dae/](https://stats.idre.ucla.edu/other/dae/)
+- Good free books
+    - [R for Data Science](https://r4ds.had.co.nz/)
+    - [Advanced R](http://adv-r.had.co.nz/) - for a look under the hood
+    - [Style guide](https://style.tidyverse.org/)
 
-# Fin
 
-## Important Syntax recap
-
-Many of these have been seen during the prior examples:
-- <code><-</code> assign, puts the right hand side into the left hand side
-- <code>?</code> followed by a command, to search for help on a command
-- <code>a:b</code> used to generate a series of integers, from a to b
-- <code></code>
-- <code>function( , , ...)</code> **arguments** to a function are seperated by commas
-- <code>c()</code> concatenate, used to create a vector
-- <code>c()</code> concatenate, used to create a vector
-- <code>[ ] [,] [[ ]]</code> used to 'extract'/interact with componets of a  
-- <code></code>
-- <code></code>
-- <code></code>
+# Thank-you
