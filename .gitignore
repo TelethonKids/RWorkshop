@@ -7,3 +7,5 @@
 # Ignore data files
 /admin
 /archive
+/vignettes/*.R
+/vignettes/*.html
