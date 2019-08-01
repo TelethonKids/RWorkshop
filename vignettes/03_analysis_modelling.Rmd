@@ -11,7 +11,7 @@ output:
     widescreen: true
     incremental: true
 vignette: >
-  %\VignetteIndexEntry{Telethon Kids Institute markdown ioslides template}
+  %\VignetteIndexEntry{03_analysis_modelling}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
