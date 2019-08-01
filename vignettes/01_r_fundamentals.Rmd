@@ -1,8 +1,8 @@
 ---
 title: "Part 1: R-Fundamentals"
 subtitle: "RWorkshop - Biometrics"
-author: Matt Cooper, Paul Stevenson, Sebastian Rauschert
-date: August 08, 2019
+author: "Matt Cooper"
+date: "08 August, 2019"
 output:
   ioslides_presentation:
     template: assets/templates/ioslides.html
@@ -11,7 +11,7 @@ output:
     widescreen: true
     incremental: false
 vignette: >
-  %\VignetteIndexEntry{Telethon Kids Institute markdown ioslides template}
+  %\VignetteIndexEntry{Part 1: R-Fundamentals}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -900,4 +900,16 @@ dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", heade
     - [Style guide](https://style.tidyverse.org/)
 
 
-# Thank-you
+## Topics Covered in This Session
+
+- OveRview
+    - What is R, brief history
+- How to get setup and use R
+- Fundamentals of R
+    - Basic syntax
+    - **Data classes and structures** <mark>**[Main Section]**</mark>
+    - Reading data in
+    - Installing/loading packages
+- Staying up-to-date in R/further reading
+
+*Thank-you*

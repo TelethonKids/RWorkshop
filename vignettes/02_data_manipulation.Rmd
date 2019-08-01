@@ -1,7 +1,8 @@
 ---
-title: "Introduction to Data Manipulation"
+title: "Part 2: Data Manipulation"
+subtitle: "RWorkshop - Biometrics"
 author: "Paul Stevenson"
-date: "`r format(Sys.time(), '%d %B %Y')`"
+date: "08 August, 2019"
 output:
   ioslides_presentation:
     template: assets/templates/ioslides.html
@@ -10,10 +11,9 @@ output:
     widescreen: true
     incremental: false
 vignette: >
-  %\VignetteIndexEntry{Introduction to Data Manipulation}
+  %\VignetteIndexEntry{Part 2: Data Manipulation}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
-  
 ---
 
 ```{r init, include = FALSE, echo = FALSE}
@@ -886,3 +886,5 @@ tki_demo %>%
 * Summarising Data
 * Text analysis
 * Functions in R
+
+*Thank-you*
