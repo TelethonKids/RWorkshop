@@ -28,9 +28,7 @@ library(ggpubr)
 library(broom)
 library(jtools)
 library(tidyr)
-
-data(iris)
-
+library(ggfortify)
 ```
 
 # Statistical Modelling in R
@@ -39,23 +37,16 @@ data(iris)
 
 order of included R functions:
 
-
->- <code>lm()</code>  
->- <code>summary()</code>  
->- <code>ggplot() + statqq()</code>  
->- <code>ggplot() + geom_smooth()</code>  
->- <code>tidy(), augment(), glance()</code>  
->- <code>summ(), plot_summs()</code>  
->- <code>autoplot()</code>  
->- <code>glm() (different families)</code>  
-
-
+>- <code style="color:tomato;">lm()</code>  
+>- <code style="color:tomato;">summary()</code>  
+>- <code style="color:tomato;">ggplot() + statqq()</code>  
+>- <code style="color:tomato;">ggplot() + geom_smooth()</code>  
+>- <code style="color:tomato;">tidy(), augment(), glance()</code>  
+>- <code style="color:tomato;">summ(), plot_summs()</code>  
+>- <code style="color:tomato;">autoplot()</code>  
+>- <code style="color:tomato;">glm() (different families), coef(), exp()</code>  
+>- <code style="color:tomato;">lmer()</code>
 ## What we cover
-
->- Linear Regression
->- Multiple Linear Regression 
->- Logistic Regression
-
 
 >- Linear Regression
 >- Multiple Linear Regression 
@@ -74,9 +65,7 @@ ggplot( aes(day2, day3)) +
   scale_color_telethonkids("light") +
   theme_minimal()
 ```
-
 # Linear Regression
-
 
 ## Linear Regression in R 
 
@@ -84,49 +73,45 @@ In a linear regression, we aim to find a model: <br/>
 
 >- that represents our data and 
 >- can give information about the association between our variables of interest.
-
 The command in R for a linear model is <br/>
   
-  <code style="aligne:center">lm(y~x)</code>.
-
-
-
-
+  <code style="aligne:center; color:tomato;">lm(y ~ x, data = data)</code>.
 This is called the _formula notation_ in R. 
 
+## ! Tip in the tidyverse
 
-## Example: 
+>- The formula-type code with the data assignment at the end might seem non-tidy.
+>- But, we can use the pipe <code style="color:tomato;">%>%</code> in the following way:
+<code style="color:tomato;">data %>%  
+      lm(y ~ x, data = .)</code>  
+    
+>- with the "." we assign the data in the pipe
+# Before we model 
+
 ## Data set summary
-Let's first have a look at the summary table of the example data set, by using the <code>summary()</code> command:
+Let's first have a look at the summary table of the example data set, by using the <code style="color:tomato;">summary()</code> command:
 
 ```{r, echo = FALSE, out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
 #kable(summary(tki_demo[,c(6:8)]))
-
 summary(tki_demo[,c(6:8)])
-
 ```
 
 # Visualisation of data distributions
-
 
 ## Helpful plots before modelling
 Before we start with the linear regression model, we need to get an idea of the underlying data and its distribution.
 We know that the linear regression has the assumtptions:
 
-
--
-
-
-
+>- Linear relationship
+>- Multivariate normality
+>- No or little multicollinearity
+>- No auto-correlation
+>- Homoscedasticity
 ## QQ-plot: {.smaller}
 ```{r, echo=TRUE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
 tki_demo %>%
-
-  filter(day2 < 100) %>%
-  gather(Days, measurement, day1:day3, factor_key=TRUE) %>%
-  ggplot( aes(sample=measurement, color=Days)) + stat_qq() + facet_wrap(~Days)
-
-
+  gather(Days, measurement, day1:day3, factor_key = TRUE) %>%
+  ggplot( aes(sample = measurement, color=Days)) + stat_qq() + facet_wrap(~Days)
 ```
 
 
@@ -186,13 +171,7 @@ grid.arrange(plot1, plot2, plot3, nrow = 2, ncol = 2)
 
 ## The <code style="color:tomato;">lm()</code> function
 
-
-# Linear Regression
-
-## The <code>lm()</code> function
-
-In the plots, we could already see, that <em>petal length</em> and <em>petal width</em> seem to be associated. This is obvious when drawing a line in the plot.
-
+In the plots, we could already see, that <em>day 2</em> and <em>day 3</em> seem to be associated. This is obvious when drawing a line in the plot.
 Let's now perform a linear regression model in R.
 
 <code style="color:tomato;">lm(day2 ~ day3, data = tki_demo)</code>
@@ -222,38 +201,9 @@ lm1 <- lm(day1 ~ day3, data = tki_demo)
 library(sjPlot)
 #tab_model(lm1, file="output.html")
 summary(lm1)
-
-```
-# <code>jtools</code> and <code>broom</code>
-
-## Improving the accessibility of the <code>lm()</code> results
-
-The output before contains a lot of relevant information, but it is not straighforward to access the individual parameters like p-values and betas
-The <code>broom</code> R package is in line with the "tidy" data handling in R and turns the linear model results into an easy accessible tibble format:
-
-```{r}
-tidy(lm1)
 ```
 
-
-## Improving output style {.smaller}
-
-The <code>broom</code> package helps with the accessibility of the output, but the style of the output is not very appealing for a publiation or a report. The <code>jtools</code> package helps with this and has other nice functionalities such as forrest plots for coefficients and confidence intervals:
-
-```{r results = 'asis'}
-export_summs(lm1)
-```
-
-
-## Diagnostics
-
-<div align="center">
-```{r error=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-library(tidyverse)
-library(broom)
-library(knitr)
-theme_set(theme_classic())
-
+# <code style="color:tomato;">jtools</code> and <code style="color:tomato;">broom</code>
 
 ## Improving the accessibility of the <code style="color:tomato;">lm()</code> results
 
@@ -263,7 +213,6 @@ theme_set(theme_classic())
 tidy(lm1)
 ```
 
-
 ## Improving output style {.smaller}
 
 >- The <code style="color:tomato;">broom</code> package helps with the accessibility of the output, but the style of the output is not very appealing for a publiation or a report. 
@@ -272,15 +221,12 @@ tidy(lm1)
 export_summs(lm1)
 ```
 
+## Access more model info for diagnostics {.smaller}
 
-
-## Diagnostic Plots {.smaller}
-
-```{r, echo=TRUE, warning=FALSE, error=FALSE}
-library(ggfortify)
-autoplot(model)
+```{r echo=TRUE, error=FALSE, message=FALSE, warning=FALSE}
+model <- lm(day2 ~ day3, data = tki_demo)
+head(augment(model))
 ```
-
 
 
 ## Diagnostic Plots {.smaller}
@@ -301,13 +247,11 @@ ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
 
 # Multiple Linear Regression
 ## How to? {.smaller}
-
-Multiple linear regression works with the same function inR : <code>lm(y ~ x + covar1 + covar2 + ... + covarx , data=data)</code>
-The R standard output is also very messy for reports, but helps with a first visual inspection in the command line:
+Multiple linear regression works with the same function in R :  
+<code style="color:tomato;">lm(y ~ x + covar1 + covar2 + ... + covarx , data = data)</code>
 
 ```{r}
-summary(lm(day3 ~ day2 + male + intervention, data=tki_demo))
-
+export_summs(lm(day3 ~ day2 + male, data = tki_demo))
 ```
 
 ## Example 1: one model {.smaller}
@@ -325,10 +269,9 @@ export_summs(lm1, lm2)
 ```
 
 ## Forrest plot to compare coefficients in the model
-Often we want to visualise the coefficients in the model to see their impact on the outcome, or visualise the coefficient of specific variable in two models, that differ only in the adjusted covariates. The <code>jtools</code> package has a nice function to do this very easily, utilising <code>ggplot2</code>:  
-<code>plot_summs()</code>
-
-
+>- Often we want to visualise the coefficients in the model to see their impact on the outcome, or visualise the coefficient of specific variable in two models, that differ only in the adjusted covariates. 
+>- The <code style="color:tomato;">jtools</code> package has a nice function to do this very easily, utilising <code style="color:tomato;">ggplot2</code>:  
+<code style="color:tomato;">plot_summs()</code>
 ## Example 1: one model
 
 ```{r}
@@ -344,20 +287,123 @@ plot_summs(lm1, lm2)
 ## Example 3: compare specific coefficients
 
 ```{r}
-
-plot_summs(lm1, lm2, coefs="day2")
-
+plot_summs(lm1, lm2, coefs = "day2")
 ```
 
 
 ## Getting more info: Confidence Intervalls {.smaller}
+>- With <code style="color:tomato;">jtools</code> we can access more information from the model in an easy step. 
+>- Here, we access the confidence intervall and variance inflation factor (for multicollinearity testing), but leave out the p-values:
+```{r}
+summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE, 
+     confint = TRUE, pvals = FALSE)$coeftable
+```
+## Excursion: Interaction effects
 
-With <code>jtools</code> we can access more information from the model in an easier step. Here, we access the confidence intervall and variance inflation factor (for multicollinearity testing), but leave out the p-values:
+>- Sometimes we also want to model an interaction effect
+>- a good example is testing for a sex interaction
+>- this is done very simply in the R formula by adding the following  
+<code style="color:tomato">lm(y ~ x*interaction, data = data)</code>  
+
+>- as you can see we only have to state the interaction term. 
+>- This will automatically include <code style="color:tomato">x + interaction + x*interaction</code> in the model!
+
+## Example for interaction with output
 
 ```{r}
-summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE, confint = TRUE, pvals = FALSE)$coeftable
+tidy(lm(day3 ~ day2*male, data = tki_demo))
 ```
 
-# Logistic regression
+
+# Generalized linear models
+
+## Principles
+
+>- The generalized linear model works very similar to the <code style="color:tomato;">lm()</code> function. We use the <code style="color:tomato;">glm()</code> function instead. 
+>- The <code style="color:tomato;">lm()</code> function always assumes a linear distribution, whereas in the <code style="color:tomato;">glm()</code> function, we have to assign the distribution ("link") and a family type ourselves.  
+>- For a logistic regression, we have to assign: <code style="color:tomato;">family = binomial(link = "logit")</code>
+>- For a poisson regression, we assign: <code style="color:tomato;">family = poisson(link = "log")</code>    
+## Code and output: Logistic regression {.smaller}
+
+```{r}
+export_summs(glm(smoker ~ male, data = tki_demo, family = binomial(link='logit')))
+```
+
+## Odds ratios
+
+>- If you want to extract the odds ratios from your logistic regression, you can use the <code style="color:tomato;">coef()</code> and <code style="color:tomato;">exp()</code> functions in the following way:
+<code style="color:tomato;">exp(coef(glm(y ~ x, family = binomial(link = 'logit'), data = data)))</code>
+
+## Example Odds ratio
+
+```{r}
+exp(coef(glm(male ~ day3 + intervention, family = binomial(link = 'logit'), data = tki_demo)))
+```
 
 
+## Code and output: Poisson Regression {.smaller}
+
+```{r}
+export_summs(glm(smoker ~ male,data = tki_demo, family = poisson(link='log')))
+```
+
+# Linear mixed effects model
+
+## The <code style="color:tomato;">lme4</code> package
+
+When we want to also account for random effects or clusters such as intervention if the effect of this is not what we are interested in, or study center in the case of a multi-center study, we use the <code style="color:tomato;">lme4</code> package.
+
+The formula works in the following way:  
+
+>- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect), data = data) </code>, for random slope  
+>- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect) + (1 | otherVariable), data = data)</code>, including <code style="color:tomato;">otherVariable</code> as a variable that has an impact on the slope 
+## Example
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(lme4)
+lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
+```
+
+# Extra: _Simple_ tests
+
+## t-test, wilcoxon-test, chi-square-test
+
+- t-test:
+    - <code style="color:tomato;">t.test(datx, daty)</code> or
+    - <code style="color:tomato;">t.test(x ~ y, data=data)</code>
+
+
+- wilcoxon test:
+    - <code style="color:tomato;">wilcox.test(datx, daty)</code> or
+    - <code style="color:tomato;">wilcox.test(x ~ y, data=data)</code>
+    
+    
+- chi-square-test:
+    - <code style="color:tomato;">chisq.test(group1, group2)</code>
+
+# Summary
+
+## Models
+
+- Linear regression and multiple linear regression both work by using <code style="color:tomato;">lm()</code>
+- Models with for other distributions (e.g. logistic regression): 
+    - <code style="color:tomato;">glm()</code>
+    - specify <code style="color:tomato;">family</code> and
+    - <code style="color:tomato;">link</code>
+- Linear mixed effects model: <code style="color:tomato;">lmer()</code>
+
+## Tidy results
+
+- All models work with the <code style="color:tomato;">broom</code> and <code style="color:tomato;">jtools</code> packages
+- tidy results: <code style="color:tomato;">tidy()</code>
+- more results: e.g. <code style="color:tomato;">augment(), glance()</code>
+
+## Publication ready
+
+- With the <code style="color:tomato;">jtools</code> package
+- <code style="color:tomato;">export_summs()</code> for regression table
+- <code style="color:tomato;">plot_summs()</code> for forest plots
+
+
+
+# The end of: modelling in R
