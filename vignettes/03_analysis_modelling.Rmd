@@ -46,6 +46,7 @@ order of included R functions:
 >- <code style="color:tomato;">autoplot()</code>  
 >- <code style="color:tomato;">glm() (different families), coef(), exp()</code>  
 >- <code style="color:tomato;">lmer()</code>
+
 ## What we cover
 
 >- Linear Regression
@@ -53,8 +54,7 @@ order of included R functions:
 >- Generalized Linear Models
 >- Briefly: Mixed effects model
 ```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, out.extra = 'class="centre" style="width: 500px;"', warnings=FALSE}
-setwd("/Users/srauschert/Desktop/Work/20.) Git_GitHub/RWorkshop/")
-tki_demo <- read_csv("data/demo.csv")
+tki_demo <- read_csv("../data/demo.csv")
 tki_demo %>%
   filter(day2 < 100) %>%
   
@@ -65,6 +65,7 @@ ggplot( aes(day2, day3)) +
   scale_color_telethonkids("light") +
   theme_minimal()
 ```
+
 # Linear Regression
 
 ## Linear Regression in R 
@@ -86,6 +87,7 @@ This is called the _formula notation_ in R.
       lm(y ~ x, data = .)</code>  
     
 >- with the "." we assign the data in the pipe
+
 # Before we model 
 
 ## Data set summary
@@ -107,6 +109,7 @@ We know that the linear regression has the assumtptions:
 >- No or little multicollinearity
 >- No auto-correlation
 >- Homoscedasticity
+
 ## QQ-plot: {.smaller}
 ```{r, echo=TRUE, out.extra = 'class="centre" style="width: 700px;"', warning=FALSE}
 tki_demo %>%
@@ -272,6 +275,7 @@ export_summs(lm1, lm2)
 >- Often we want to visualise the coefficients in the model to see their impact on the outcome, or visualise the coefficient of specific variable in two models, that differ only in the adjusted covariates. 
 >- The <code style="color:tomato;">jtools</code> package has a nice function to do this very easily, utilising <code style="color:tomato;">ggplot2</code>:  
 <code style="color:tomato;">plot_summs()</code>
+
 ## Example 1: one model
 
 ```{r}
@@ -298,6 +302,7 @@ plot_summs(lm1, lm2, coefs = "day2")
 summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE, 
      confint = TRUE, pvals = FALSE)$coeftable
 ```
+
 ## Excursion: Interaction effects
 
 >- Sometimes we also want to model an interaction effect
@@ -357,6 +362,7 @@ The formula works in the following way:
 
 >- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect), data = data) </code>, for random slope  
 >- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect) + (1 | otherVariable), data = data)</code>, including <code style="color:tomato;">otherVariable</code> as a variable that has an impact on the slope 
+
 ## Example
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
