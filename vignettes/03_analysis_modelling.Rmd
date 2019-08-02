@@ -1,8 +1,8 @@
 ---
-title: "Part 3: Statistical modelling"
-subtitle: "RWorkshop - Biometrics"
+title: "RStudio Workshop"
+subtitle: "Statistical modelling in R"
 author: "Sebastian Rauschert"
-date: "08 August, 2019"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
   ioslides_presentation:
     template: assets/templates/ioslides.html
@@ -11,7 +11,7 @@ output:
     widescreen: true
     incremental: true
 vignette: >
-  %\VignetteIndexEntry{Part 3: Statistical modelling}
+  %\VignetteIndexEntry{03_analysis_modelling}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -410,11 +410,6 @@ lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
 - <code style="color:tomato;">export_summs()</code> for regression table
 - <code style="color:tomato;">plot_summs()</code> for forest plots
 
-## Topics Covered in This Session
 
->- Linear Regression
->- Multiple Linear Regression 
->- Generalized Linear Models
->- Briefly: Mixed effects model
 
-*Thank-you*
+# The end of: modelling in R
