@@ -1,8 +1,8 @@
 ---
-title: "RStudio Workshop"
-subtitle: "Statistical modelling in R"
+title: "Part 3: Statistical modelling"
+subtitle: "RWorkshop - Biometrics"
 author: "Sebastian Rauschert"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "08 August, 2019"
 output:
   ioslides_presentation:
     template: assets/templates/ioslides.html
@@ -11,7 +11,7 @@ output:
     widescreen: true
     incremental: true
 vignette: >
-  %\VignetteIndexEntry{03_analysis_modelling}
+  %\VignetteIndexEntry{Part 3: Statistical modelling}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -47,12 +47,21 @@ order of included R functions:
 >- <code style="color:tomato;">glm() (different families), coef(), exp()</code>  
 >- <code style="color:tomato;">lmer()</code>
 
+
 ## What we cover
+<div class="columns-2">
+>- Model results presentation
+>- Model Diagnostics
+>- Tidy Tables and Graphs  
+
+__For:__
 
 >- Linear Regression
 >- Multiple Linear Regression 
 >- Generalized Linear Models
 >- Briefly: Mixed effects model
+
+
 ```{r echo=FALSE, error=FALSE, message=FALSE, warning=FALSE, out.extra = 'class="centre" style="width: 500px;"', warnings=FALSE}
 tki_demo <- read_csv("../data/demo.csv")
 tki_demo %>%
@@ -65,6 +74,7 @@ ggplot( aes(day2, day3)) +
   scale_color_telethonkids("light") +
   theme_minimal()
 ```
+</div>
 
 # Linear Regression
 
@@ -76,16 +86,20 @@ In a linear regression, we aim to find a model: <br/>
 >- can give information about the association between our variables of interest.
 The command in R for a linear model is <br/>
   
-  <code style="aligne:center; color:tomato;">lm(y ~ x, data = data)</code>.
+  <code style="aligne:center; color:tomato;">lm(y ~ x, data = data)</code>.  
+
 This is called the _formula notation_ in R. 
 
 ## ! Tip in the tidyverse
 
 >- The formula-type code with the data assignment at the end might seem non-tidy.
 >- But, we can use the pipe <code style="color:tomato;">%>%</code> in the following way:
-<code style="color:tomato;">data %>%  
-      lm(y ~ x, data = .)</code>  
-    
+
+```{r echo=TRUE, eval=FALSE}
+data %>%  
+      lm(y ~ x, data = .)
+```
+      
 >- with the "." we assign the data in the pipe
 
 # Before we model 
@@ -93,8 +107,7 @@ This is called the _formula notation_ in R.
 ## Data set summary
 Let's first have a look at the summary table of the example data set, by using the <code style="color:tomato;">summary()</code> command:
 
-```{r, echo = FALSE, out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
-#kable(summary(tki_demo[,c(6:8)]))
+```{r, echo = TRUE, out.extra = 'class="centre" style="width: 100px;"',warning=FALSE}
 summary(tki_demo[,c(6:8)])
 ```
 
@@ -177,11 +190,11 @@ grid.arrange(plot1, plot2, plot3, nrow = 2, ncol = 2)
 In the plots, we could already see, that <em>day 2</em> and <em>day 3</em> seem to be associated. This is obvious when drawing a line in the plot.
 Let's now perform a linear regression model in R.
 
-<code style="color:tomato;">lm(day2 ~ day3, data = tki_demo)</code>
+<code style="color:tomato;">lm(day3 ~ day2, data = tki_demo)</code>
 
-- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>day2</em>**.
+- As said before, the first argument in the code is **<em>y</em>**, our outcome variable or <em>dependent variable</em>. In this case it is **<em>day3</em>**.
 
-- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>day3</em>**.
+- The second Argument is **<em>x</em>**, the <em>independent variable</em>. In our case: **<em>day2</em>**.
 
 - We also specify the data set that holds the variables we specified as **<em>x</em>** and **<em>y</em>**.
 
@@ -200,7 +213,7 @@ We can also store our model results in a variable:
 
 ```{r, message=FALSE,  warning=FALSE, error=FALSE, echo = FALSE,out.extra = 'class="centre" style="width: 500px;"'}
 #summary(lm(Petal.Length~Petal.Width, data=iris))
-lm1 <- lm(day1 ~ day3, data = tki_demo)
+lm1 <- lm(day3 ~ day1, data = tki_demo)
 library(sjPlot)
 #tab_model(lm1, file="output.html")
 summary(lm1)
@@ -224,10 +237,10 @@ tidy(lm1)
 export_summs(lm1)
 ```
 
-## Access more model info for diagnostics {.smaller}
+## Access more model info for diagnostics: <code style="color:tomato;">broom</code> {.smaller}
 
 ```{r echo=TRUE, error=FALSE, message=FALSE, warning=FALSE}
-model <- lm(day2 ~ day3, data = tki_demo)
+model <- lm(day3 ~ day2, data = tki_demo)
 head(augment(model))
 ```
 
@@ -249,7 +262,7 @@ ggplot(model.diag.metrics, aes(Petal.Length, Petal.Width)) +
 </div>
 
 # Multiple Linear Regression
-## How to? {.smaller}
+## Multiple Linear Regression in R {.smaller}
 Multiple linear regression works with the same function in R :  
 <code style="color:tomato;">lm(y ~ x + covar1 + covar2 + ... + covarx , data = data)</code>
 
@@ -266,7 +279,7 @@ export_summs(lm(day3 ~ day2 + male + smoker, data = tki_demo))
 ## Example 2: more models {.smaller}
 With the demo data set:
 ```{r}
-lm1 <- lm(day3 ~ day2, data = tki_demo)
+lm1 <- lm(day3 ~ day2 + male, data = tki_demo)
 lm2 <- lm(day3 ~ day2 + male + smoker, data = tki_demo)
 export_summs(lm1, lm2)
 ```
@@ -306,12 +319,12 @@ summ(lm2, scale = TRUE, vifs = TRUE, part.corr = TRUE,
 ## Excursion: Interaction effects
 
 >- Sometimes we also want to model an interaction effect
->- a good example is testing for a sex interaction
->- this is done very simply in the R formula by adding the following  
+>- A good example is testing for a sex interaction
+>- This is done very simply in the R formula by adding the following  
 <code style="color:tomato">lm(y ~ x*interaction, data = data)</code>  
 
->- as you can see we only have to state the interaction term. 
->- This will automatically include <code style="color:tomato">x + interaction + x*interaction</code> in the model!
+>- As you can see we only have to state the interaction term. 
+>- This will automatically include <code style="color:tomato">x + interaction + x:interaction</code> in the model!
 
 ## Example for interaction with output
 
@@ -325,9 +338,10 @@ tidy(lm(day3 ~ day2*male, data = tki_demo))
 ## Principles
 
 >- The generalized linear model works very similar to the <code style="color:tomato;">lm()</code> function. We use the <code style="color:tomato;">glm()</code> function instead. 
->- The <code style="color:tomato;">lm()</code> function always assumes a linear distribution, whereas in the <code style="color:tomato;">glm()</code> function, we have to assign the distribution ("link") and a family type ourselves.  
+>- The <code style="color:tomato;">lm()</code> function always assumes a linear relationship between the X’s and Y’s, whereas in the <code style="color:tomato;">glm()</code> function, we have to assign the distribution ("link") and a family type ourselves.  
 >- For a logistic regression, we have to assign: <code style="color:tomato;">family = binomial(link = "logit")</code>
 >- For a poisson regression, we assign: <code style="color:tomato;">family = poisson(link = "log")</code>    
+
 ## Code and output: Logistic regression {.smaller}
 
 ```{r}
@@ -341,8 +355,9 @@ export_summs(glm(smoker ~ male, data = tki_demo, family = binomial(link='logit')
 
 ## Example Odds ratio
 
-```{r}
-exp(coef(glm(male ~ day3 + intervention, family = binomial(link = 'logit'), data = tki_demo)))
+```{r message=FALSE, warning=FALSE}
+glm1 <- glm(male ~ day3 + intervention, family = binomial(link = 'logit'), data = tki_demo)
+round(exp(cbind(OR = coef(glm1), confint(glm1))),2)
 ```
 
 
@@ -356,18 +371,19 @@ export_summs(glm(smoker ~ male,data = tki_demo, family = poisson(link='log')))
 
 ## The <code style="color:tomato;">lme4</code> package
 
-When we want to also account for random effects or clusters such as intervention if the effect of this is not what we are interested in, or study center in the case of a multi-center study, we use the <code style="color:tomato;">lme4</code> package.
+When we want to also account for random effects or clusters we use the <code style="color:tomato;">lme4</code> package.  
+Clusters can be an intervention (unless we want to quanitfy the effect of teh intervention) or study center in the case of a multi-center study.
 
 The formula works in the following way:  
 
 >- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect), data = data) </code>, for random slope  
->- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect) + (1 | otherVariable), data = data)</code>, including <code style="color:tomato;">otherVariable</code> as a variable that has an impact on the slope 
+>- <code style="color:tomato;">lmer(y ~ x + (1 + x | randomEffect) + (1 | otherVariable), data = data)</code>, including <code style="color:tomato;">otherVariable</code> as a variable that has an impact on the intercept. 
 
 ## Example
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(lme4)
-lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
+lmer(day2 ~ day1 + (1 + day1 | intervention), data = tki_demo )
 ```
 
 # Extra: _Simple_ tests
@@ -389,18 +405,18 @@ lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
 
 # Summary
 
-## Models
+## Model result presentation
 
 - Linear regression and multiple linear regression both work by using <code style="color:tomato;">lm()</code>
-- Models with for other distributions (e.g. logistic regression): 
+- Models with other distributions (e.g. logistic regression): 
     - <code style="color:tomato;">glm()</code>
     - specify <code style="color:tomato;">family</code> and
     - <code style="color:tomato;">link</code>
 - Linear mixed effects model: <code style="color:tomato;">lmer()</code>
 
-## Tidy results
+## Tidy Tables and Graphs
 
-- All models work with the <code style="color:tomato;">broom</code> and <code style="color:tomato;">jtools</code> packages
+- Most models work with the <code style="color:tomato;">broom</code> and <code style="color:tomato;">jtools</code> packages
 - tidy results: <code style="color:tomato;">tidy()</code>
 - more results: e.g. <code style="color:tomato;">augment(), glance()</code>
 
@@ -410,6 +426,11 @@ lmer(day1 ~ day2 + (1 + day2 | intervention), data = tki_demo )
 - <code style="color:tomato;">export_summs()</code> for regression table
 - <code style="color:tomato;">plot_summs()</code> for forest plots
 
+## Topics Covered in This Session
 
+>- Linear Regression
+>- Multiple Linear Regression 
+>- Generalized Linear Models
+>- Briefly: Mixed effects model
 
-# The end of: modelling in R
+*Thank-you*
