@@ -377,23 +377,6 @@ See `?strptime` for more date and time formatting options (also on next slide).
 
 # Cleaning and Data Wrangling
 
-## High Level Data Summary | Base R Syntax
-
-```{r summary_data, comment = NA, class = "small"}
-summary(tki_demo[, c("male", "day1", "day2", "day3")])
-
-```
-
-## High Level Data Summary | Tidyverse Syntax
-
-```{r summary_data_tidy, comment = NA}
-tki_demo %>%
-  summarise_at(c("male", "day1", "day2", "day3"),
-               mean,
-               na.rm = T)
-
-```
-
 ## Pipe Operator "%>%"
 
 ```{r eval = F}
@@ -540,6 +523,25 @@ tki_demo %>%
 
 # Summarising Data
 
+## High Level Data Summary | Base R Syntax
+
+```{r summary_data, comment = NA, class = "small"}
+summary(tki_demo[, c("male", "day1", "day2", "day3")])
+
+```
+
+## High Level Data Summary | Tidyverse Syntax
+
+* Summarise multiple columns at once
+
+```{r summary_data_tidy, comment = NA}
+tki_demo %>%
+  summarise_at(c("day1", "day2", "day3"),
+               mean,
+               na.rm = T)
+
+```
+
 ## Summarise
 
 ```{r summarise, comment = NA}
@@ -548,14 +550,6 @@ tki_demo %>%
             day1_mean = mean(day1, na.rm = T),
             day2_median = median(day2, na.rm = T),
             day3_sd = sd(day3, na.rm = T))
-
-```
-
-## Summarise | Multiple Columns
-
-```{r summarise_multiple, comment = NA}
-tki_demo %>%
-  summarise_at(c("day1", "day2", "day3"), mean, na.rm = T)
 
 ```
 
@@ -603,6 +597,10 @@ tki_demo %>%
   
 ```
 
+* `fmt = '%#.2f'` is the code used to take the first 2 decimal places
+  - Truncates, does not round
+* Returns a `character` vector
+
 ## "Pasting" Text Columns
 
 ```{r, echo = F, comment = NA}
@@ -618,6 +616,17 @@ tki_demo %>%
 ```
 
 # Reshaping Data
+
+## Wide vs. Long Data
+
+* Wide data
+  - 1 row of data per individual/participant
+  - Multiple columns store measurements in longitudinal studies
+* Long data
+  - 1 row of data per record/measurement
+  - An individual might have many rows in longitudinal studies
+* The `Tidyverse` philosophy (and associated packages) only deals with long data
+* Fortunately, there are tools to reshape wide data to long format...
 
 ## The `tidyr` package
 
@@ -636,7 +645,10 @@ library(tidyr)
 * `pivot_longer()` "lengthens" data, increasing the number of rows and decreasing the number of columns
 * The inverse transformation is `pivot_wider()`
 
-`pivot_longer(data, cols, names_to = "name")`
+```{r, eval = F}
+pivot_longer(data, cols, names_to = "name", values_to = "name")
+
+```
 
 ## `pivot_longer()`
 
