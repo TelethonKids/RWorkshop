@@ -108,8 +108,8 @@ R is:
 <img src="assets/images/01_tidyverse.png" width = "150" style="float:right">
 
 - Tidyverse
-    - controversy
-    - base *vs* tidyverse
+    - Controversy
+    - Base *vs* tidyverse
 
 <blockquote class="blockquote">
   <div class = "large"><p>"The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures."</p></div>
@@ -128,7 +128,7 @@ R is not a:
 ## But first - Disclaimer
 
 - There are **many ways** to use R
-- There are **many ways** to do **most** operations R
+- There are **many ways** to do **most** operations in R
 - This presentation focuses on the collective 'best practice' advice of our team of daily R users
 - R is rapidly evolving
 - Online help/guides are often out-of-date 
@@ -140,13 +140,15 @@ R is not a:
 - Typically, commands saved in a plain text file (.R)
 - Commands can be executed in bulk
     - Large scale analysis/data manipulation
-    - 'one-click' reports <mark>*(like these slides)*</mark>
+    - 'One-click' reports <mark>*(like these slides)*</mark>
 
 ## And - a heads up
 
 - R is a cAsE sensitive language
-- R is largely forgiving with where white space is (or isn't!)
-    - including line breaks, bracket placement etc
+- R is relaxed about where white space
+    - In and around operators (<code>+ - *</code>)
+    - In and around brackets
+    - And line breaks!
 
 ## Installing R
 
@@ -164,7 +166,7 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide.png"))
 
 ## RStudio IDE
 
-- *free and open-source integrated development environment for R*
+- *Free and open-source integrated development environment for R*
 - Screen divided into quarters, typically
     - One for your code (commands)
     - One for your console (commands executed/results shown)
@@ -198,8 +200,8 @@ knitr::include_graphics(file.path("assets", "images", "01_rstudio_ide3_large.png
 ## Basic syntax - assign
 
 - Assign '<code><-</code>'
-    - less than sign followed by dash
-    - puts the right hand side into the left hand side
+    - Less than sign followed by dash
+    - Puts the right hand side into the left hand side
     
 <code>a <- 3</code>
 
@@ -227,8 +229,8 @@ a + a
 ## Basic syntax - brackets
 
 - Round brackets <code>(something) | (x, y)</code>
-    - multiple things inside, separated by a comma
-    - typically used to group/provide <mark>arguments</mark> for a function
+    - Multiple things inside, separated by a comma
+    - Typically used to group/provide <mark>arguments</mark> for a function
     
 ```{r}
 sum(1, 2, 3, 4, NA, 5, na.rm = T)
@@ -237,8 +239,8 @@ sum(1, 2, 3, 4, NA, 5, na.rm = T)
 ## Basic syntax - brackets
 
 - Square brackets <code>[something] | [ ] [,] [[ ]]</code>
-    - multiple things inside, separated by a comma
-    - typically used for <mark>indices</mark> when navigating *within* a structure
+    - Multiple things inside, separated by a comma
+    - Typically used for <mark>indices</mark> when navigating *within* a structure
 
 ```{r}
 c("one", "two", "three")[2]
@@ -247,8 +249,8 @@ c("one", "two", "three")[2]
 ## Basic syntax - brackets
 
 - Curly brackets <code>{something}</code>
-    - groups multiple <mark>lines of code</mark> 
-    - typically used when creating functions
+    - Groups multiple <mark>lines of code</mark> 
+    - Typically used when creating functions
 
 ```{r echo = T}
 facts_about <- function(x){
@@ -261,7 +263,7 @@ facts_about("matt")
 
 - Colon <code>:</code> used to create a sequence
     - <code>1:4</code> produces <code>1 2 3 4</code>
-    - *double colon to access functions in libraries that aren't loaded*
+    - *Double colon to access functions in libraries that aren't loaded*
 - Hashtag for comments <code># For this next bit of code online somewhere</code>
     - Code won't be executed
 - Question mark <code>?something</code> for help
@@ -269,12 +271,13 @@ facts_about("matt")
 
 ## Basic syntax - other
 
-- The letters <code>T</code> and <code>F</code> are 'reserved' - logicals
-    - indicate <code>TRUE</code> and <code>FALSE</code> respectively, don't overwrite them
-    - used regularly within <mark>arguments</mark>
+- The letters <code>T</code> and <code>F</code> are abbreviations for <code>TRUE</code> and <code>FALSE</code>
+    - These are called logicals
+    - It is best to not overwrite <code>T</code> and <code>F</code>
+    - Used regularly within <mark>arguments</mark>
 - Working directory 
     - <code>getwd()</code> and <code>setwd()</code>
-    - best practise is using relative directory paths!
+    - Best practise is using relative directory paths!
 
 # Classes
 ## Classes
@@ -282,7 +285,7 @@ facts_about("matt")
 - Each data point (value within a cell) will have a class.
 - There are many classes, most (and the common ones) are nice and clear.
 - Classes have, somewhat of, a hierarchy 
-    - character is King/Queen amongst many
+    - Character is King/Queen amongst many
 - Classes are closely related to Structures (the next topic).
 - Functions will respond differently based on the class of data you feed them.
 - Sometimes referred to as <code>mode</code>
@@ -291,9 +294,7 @@ facts_about("matt")
 
 - <code>character</code> is the highest-level 'catch-all' class
 - Free text fields will be of class <code>character</code>
-- Any* data point that has something other than numbers in it will default to being of class <code>character</code>
-
-*data points with non-nuermic (alpha) characters can be made into other classes (more to come) 
+- Any data point that has something other than numbers in it will (typically) default to being of class <code>character</code>
 
 ## Classes - character
 
@@ -338,7 +339,7 @@ class(x)
     + <code>integer</code> (no decimals)
 - R may convert between the three as it sees fit
 
-- *"it is perfectly feasible to use R successfully for years and not need to know the answer to this question"* - stackoverflow
+- *"It is perfectly feasible to use R successfully for years and not need to know the answer to this question"* - stackoverflow
 
 ## Classes - numeric (integer/double)
 
@@ -400,7 +401,7 @@ class(y)
 y <- as.factor(c("Cat", "Other", "Dog", "Dog")); y
 ```
 
-- note, the **order** of the levels
+- Note, the **order** of the levels
 
 ## Classes - factor
 
@@ -424,11 +425,11 @@ y <- factor(y); levels(y)
 
 ## Classes - logical
 
-- Class <code>logical</code> variables can only take two*, <code>TRUE</code> or <code>FALSE</code>
+- Class <code>logical</code> variables can be either <code>TRUE</code>, <code>FALSE</code>, or <code>NA</code>
 - Can usefully be abbreviated as <code>T</code> and <code>F</code> 
 - Generally used as a selection mechanism 
-    - records in/out
-    - conditional (<code>if</code>) statements
+    - Records in/out
+    - Conditional (<code>if</code>) statements
 - Work well with <code>sum()</code>, <code>any()</code>, <code>all()</code>
 - Be aware of combined logicals!
     - <code>F + F + NA</code> = ?
@@ -495,8 +496,8 @@ all(c(T, F, T))
 
 - Class <code>date</code> follows relatively strict formatting
 - Can also include time
-    - via 'associated' classes <code>POSIXct</code>, <code>POSIXlt</code>
-    - be aware of timezones
+    - Via 'associated' classes <code>POSIXct</code>, <code>POSIXlt</code>
+    - Be aware of timezones
 - Relatively nice syntax for coverting strings to dates
 - Has many helper funtions to aid date math
 - Lubridate!
@@ -556,7 +557,7 @@ class(as.Date("31.01.2019", format = "%d.%m.%Y"))
 library(lubridate); class(dmy("31.01.2019"))
 ```
 
-- complex (powerful?) new classes
+- Complex (powerful?) new classes
     - <code>duration</code>, <code>interval</code>, <code>period</code>
     
 ## Classes - date | lubridate  
@@ -587,8 +588,8 @@ as.period(interval(ymd("1983-10-16"), Sys.Date()))
 
 Single element (scalar typically)
 
-- most basic building block
-- a cell
+- Most basic building block
+- A cell
 
 ```{r}
 i <- 1
@@ -596,10 +597,10 @@ i <- 1
 
 ## Structures - vector
 
-- at least two elements
-- a <code>vector</code> is not a class
-- a <code>vector</code> HAS a class, and it can have only one! (remember the hierarchy)
-- the power of R, is vectorised processing 
+- At least two elements
+- A <code>vector</code> is not a class
+- A <code>vector</code> HAS a class, and it can have only one! (remember the hierarchy)
+- The power of R, is vectorised processing 
 
 ## Structures - vector | we've already seen a lot!
 
@@ -630,12 +631,12 @@ sum(y)
 - Likely the main* structure you will work with in R
 - Best 'pictured' as a table (two-dimensional), with rows and columns
 - Best 'thought of' as:
-    - a number of | vertical | vectors, side-by-side, bound together, all of equal length
+    - A number of | vertical | vectors, side-by-side, bound together, all of equal length
 - All elements of a <mark>column</mark> will be off the same class!
 - When reading in a csv, a plain text file, (a worksheet of) an excel file
-    - it will generally become available to you as a <code>data.frame</code>
+    - It will generally become available to you as a <code>data.frame</code>
 
-* *standby for tibbles*
+* *Standby for tibbles*
 
 ## Structures - tibble 
 
@@ -698,8 +699,8 @@ head(tki_demo[ , c(1, 2, 3, ncol(tki_demo))])
 
 ## Structures - tibble
 
-- a <code>tibble</code> is the <code>data.frame</code> of the <mark>tidyverse</mark>
-- broady the same as a <code>data.frame</code>, but less unruly
+- A <code>tibble</code> is the <code>data.frame</code> of the <mark>tidyverse</mark>
+- Broady the same as a <code>data.frame</code>, but less unruly
 
 ```{r echo = T}
 load("../data/dat.RData")
@@ -753,7 +754,7 @@ head(tki_list[[1]], 2); head(tki_list[[2]], 2) # access elements
 
 ## Structures - list
 
-- why? efficiency!
+- Why? Efficiency!
 
 ```{r}
 lapply(tki_list, head, 1)
@@ -771,7 +772,7 @@ lapply(tki_list, head, 1)
 
 - Like a list, but must be all of the same class
 
-*beyond the scope of this level - computational efficiency*
+*Beyond the scope of this level - computational efficiency*
 
 # Reading and saving data
 ## Reading data in
@@ -844,7 +845,7 @@ dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", heade
 - Recommend 
     - <code>write.csv(d, <span style="color:red">paste0(Sys.Date(), </span>"_dat.csv"))</code>
 
-# Installing/loading packages
+# Packages in R
 
 ## Packages - overview
 
@@ -859,17 +860,17 @@ dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", heade
 ## Packages - installing and loading
 
 - Installed via: <code>install.packages("ggplot2")</code>
-    - *note the quote marks*
-    - by default, this will also install that packages <mark>dependencies</mark> 
+    - *Note the quote marks*
+    - By default, this will also install that packages <mark>dependencies</mark> 
 - Packages loaded for use via: <code>library(ggplot)</code>
-    - *note the lack of quote marks*
+    - *Note the lack of quote marks*
 - Updated via: <code>updated.packages()</code>
-    - considered using '<code>ask = F</code>'
+    - Considered using '<code>ask = F</code>'
 
 ## Packages - installing and loading
 
 - Some packages are installed direct from the developer
-    - Installed via <code>remotes<span style="color:red">::</span>install_github()</code>
+    - Installed via <code>remotes::install_github()</code>
     - That is, using the <code>install_github()</code> function within the <code>remotes</code> package
 - Our package is installed this way
     - <code>remotes::install_github("TelethonKids/biometrics", build_vignettes = TRUE)</code>
@@ -879,8 +880,9 @@ dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", heade
 - <code>.libPaths()</code> will show where (on your computer) your packages are stored
 - <code>citation("ggplot2")</code> will tell you how to cite the package
 - Beware of clashes
-    - packages overiding base functions, or two packages using the same name for different functions
-        - *not overly common, and you will get warned*
+    - Packages overiding base functions, or two packages using the same name for different functions
+        - *Not overly common, and you will get warned*
+        - Use <code>dplyr::separate()</code> explicitly to get around this
 - Help file will tell you what package a function resides in
     - <code>?geom_path</code> starts (top left) with '<code>geom_path {ggplot2}</code>'
 
@@ -890,7 +892,7 @@ dat <- read.csv("<span style="color:red">..</span>/data/my_data_file.csv", heade
 
 - R-bloggers [www.r-bloggers.com/](https://www.r-bloggers.com/)
 - RStudio's resources [www.rstudio.com/resources](https://www.rstudio.com/resources) 
-    - and /cheatsheets
+    - And /cheatsheets
 - Stackoverflow [www.stackoverflow.com/questions/tagged/r](https://stackoverflow.com/questions/tagged/r)
 - Twitter #rstats [www.twitter.com/search?q=%23rstats](https://twitter.com/search?q=%23rstats)
 - UCLA's  resources [www.stats.idre.ucla.edu/other/dae/](https://stats.idre.ucla.edu/other/dae/)
