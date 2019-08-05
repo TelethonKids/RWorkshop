@@ -10,6 +10,7 @@ library(dplyr)
 library(tibble)
 library(readr)
 library(random)
+library(ggplot2)
 
 set.seed(1724)
 

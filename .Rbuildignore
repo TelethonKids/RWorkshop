@@ -5,3 +5,11 @@
 ^archive$
 ^data-raw$
 ^\.git$
+^doc$
+^inst\\doc$
+^Meta$
+^slides$
+^labs$
+^literature$
+^data\\demo\.csv$
+^data\\demo_complications\.csv$

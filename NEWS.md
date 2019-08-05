@@ -1,3 +1,7 @@
 # New project
 
-* Initial release
+* Initial release with the following:
+  - Package sample data
+  - R Fundamentals
+  - Data manipulation
+  - Linear Models

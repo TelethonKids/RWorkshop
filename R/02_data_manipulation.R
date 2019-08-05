@@ -209,7 +209,7 @@ tki_demo %>%
 
 #### Reshaping data ----
 
-remotes::install_github("tidyverse/tidyr")
+# remotes::install_github("tidyverse/tidyr")
 library(tidyr)
 
 
@@ -273,7 +273,7 @@ tki_demo %>%
 
 # apply the same function to multiple columns
 
-square <- function(x) x^2
+square <- function(x) ifelse(lubridate::is.Date(x), x, x^2)
 
 tki_demo %>%
   mutate_at(c("day1", "day2", "day3"), list(~square(.)))
@@ -281,7 +281,7 @@ tki_demo %>%
 # apply function to columns that meet a criteria
 
 tki_demo %>%
-  mutate_if(is.double, list(~square(.)))
+  mutate_if(is.numeric, list(~square(.)))
 
 # apply a function to data frame subsets
 

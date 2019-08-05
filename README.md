@@ -1,7 +1,9 @@
-Telethon Kids Institute R Workshop Resources
+Introduction to R Workshop
 ================
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+## Resources for the Telethon Kids Institute Introduction to R Workshop
 
 ## Slides
 
@@ -12,11 +14,11 @@ directory of this repository.
 
 ## Installing
 
-Install the Telethon Kids Institute RWorkshop package by copying the
+Install the Telethon Kids Institute R Workshop package by copying the
 following into the R
     console:
 
-    devtools::install_github("TelethonKids/RWorkshop", build_vignettes = TRUE)
+    remotes::install_github("TelethonKids/RWorkshop", build_vignettes = TRUE)
 
 ## Getting Started
 

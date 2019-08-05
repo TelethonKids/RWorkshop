@@ -372,7 +372,7 @@ export_summs(glm(smoker ~ male,data = tki_demo, family = poisson(link='log')))
 ## The <code style="color:tomato;">lme4</code> package
 
 When we want to also account for random effects or clusters we use the <code style="color:tomato;">lme4</code> package.  
-Clusters can be an intervention (unless we want to quanitfy the effect of teh intervention) or study center in the case of a multi-center study.
+Clusters can be an intervention (unless we want to quanitfy the effect of the intervention) or study center in the case of a multi-center study.
 
 The formula works in the following way:  
 
