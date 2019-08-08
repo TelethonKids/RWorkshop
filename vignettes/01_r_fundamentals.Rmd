@@ -501,7 +501,7 @@ all(c(T, F, T))
     - Via 'associated' classes <code>POSIXct</code>, <code>POSIXlt</code>
     - Be aware of timezones
 - Relatively nice syntax for coverting strings to dates
-- Has many helper funtions to aid date math
+- Has many helper functions to aid date math
 - Lubridate!
 - Go slow!
 
