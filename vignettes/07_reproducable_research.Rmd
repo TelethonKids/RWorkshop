@@ -1,0 +1,289 @@
+---
+title: "Introduction to Reproducible Research and Reporting"
+author: "Paul Stevenson"
+date: "`r format(Sys.time(), '%d %B %Y')`"
+output:
+  ioslides_presentation:
+    template: assets/templates/ioslides.html
+    logo: assets/images/logo800.jpg
+    css: assets/css/ioslides.css
+    widescreen: true
+    incremental: false
+vignette: >
+  %\VignetteIndexEntry{Reproducable Research}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+  
+---
+
+```{r init, include = FALSE, echo = FALSE}
+library(biometrics)
+library(knitr)
+
+source("assets/R/hooks.R")
+
+```
+
+# A Standardised Workflow
+
+## Motivation | Create a container for the different elements that make up a document and its computations
+
+* Standardise our workflow and automate new project initiation using the R programming language
+* Incorporate the principles of “reproducible research” to ensure every step of our analysis is traceable and verifiable
+* Create beautiful HTML documents out-of-the-box that don’t require knowledge of HTML or Javascript
+* Set-up a toolbox to help us and our collaborators to get meaning out of data by focusing on “what does this mean” not “how can we do this”
+
+# Example Template Project
+
+## Directory Structure
+
+```{r, echo = F, out.extra = "figure", out.width = "75%"}
+knitr::include_graphics(file.path("assets", "images", "07_network.JPG"))
+
+```
+
+## Project meta data
+
+* README.md
+  - a synopsis of the project
+  - very useful for your future self and colleges/collaborators
+ 
+* NEWS.md
+  - Communicate change to the project files/data
+ 
+* DESCRIPTION (R specific - Python requirements.txt)
+* LICENSE
+* .gitIgnore (Will talk about Git later)
+
+# Project Administration
+
+## admin | **<< Colour per network diagram >>**
+
+* Project meta data
+* Legal documents (e.g. contracts)
+* Communications
+* Ethics documentation
+* Indirect resources (e.g. papers)
+* Project management resources
+* etc.
+   
+Consider adding directories/files marked with an asterisk to .gitIgnore
+    
+## archive | **<< Colour per network diagram >>**
+
+* Old code that might be redundant, but is precious
+* Helps to keep project folders tidy
+
+# Data Directories
+
+## Data Directories | **<< Colour per network diagram >>**
+
+```{r, echo = F, out.extra = "figure", out.width = "50%"}
+knitr::include_graphics(file.path("assets", "images", "07_Slide3.JPG"))
+
+```
+
+## data-raw | **<< Colour per network diagram >>**
+
+* A "read-only" directory to store raw data (e.g. Excel, STATA, SAS, .csv)
+* Recommend changing the file to read only in operating system
+* The heart of reproducible research, all actions are traceable from raw data to report
+   
+## data | **<< Colour per network diagram >>**
+ 
+* Data is converted from the raw format in to the software's preferred structure (e.g. .RData, .rds)
+* Minimal operations are performed on data
+  - correcting variable names
+  - data cleaning
+  - data harmonisation/standardisation/coding
+  - table joining/splitting
+     
+## cache | **<< Colour per network diagram >>**
+ 
+* Store manipulated data here for statistical analysis
+* .Rmd and 00-main.R will read data from the "cache" directory
+* A ProjectTempalte directory (next slide)
+  - Automatically load "cached" data, but ignore cleaned data
+   
+# R Scripts
+
+## The ProjectTemplate Package
+
+```{r eval = F}
+library('ProjectTemplate')
+load.project()
+
+```
+
+* Our default project templates build on the ProjectTemplate package
+* Automates data initiation
+  - create a new project based on a template
+  - load library packages
+  - run "munge" scripts
+  - load data from "cache" and/or "data"
+
+## The ProjectTemplate Package | Project Creation is Quick and Simple
+
+```{r eval = F}
+install.packages("ProjectTemplate")
+
+library(ProjectTemplate)
+
+# Create a New Project based on a template
+options(ProjectTemplate.templatedir = "path/to/templates")
+create.project(paste(“path/to/projects”, “00_project”, sep = “/”),
+               template = "biometrics_project")
+               
+# Start-of-day project initiation
+load.project(munging = FALSE, data_loading = FALSE, cache_loading = TRUE)
+               
+```
+
+```{r, echo = F, out.extra = "figure", out.width = "30%"}
+knitr::include_graphics(file.path("assets", "images", "07_ProjectTemplate.jpg"))
+
+```
+
+## The ProjectTemplate Package | config/global.dcf **<< Colour per network diagram >>**
+
+<div class = "col2">
+
+`version:` 0.9.0
+`data_loading:` TRUE
+`data_loading_header:` TRUE
+`data_ignore:`
+`cache_loading:` TRUE
+`recursive_loading:` FALSE
+`munging:` TRUE
+`logging:` FALSE
+`logging_level:` INFO
+`load_libraries:` FALSE
+`libraries:` stats, reshape2, plyr, tidyverse
+`as_factors:` FALSE
+`attach_internal_libraries:` FALSE
+`cache_loaded_data:` FALSE
+`sticky_variables:` NONE
+`tables_type:` tibble
+
+</div>
+
+## munge | **<< Colour per network diagram >>**
+
+<blockquote class="blockquote">
+  <div class = "large"><h3>Verb (used with or without object)</h3>
+  <p>To manipulate (raw data), especially to convert (data) from one format to another:</p></div>
+  <footer class="blockquote-footer">www.dictionary.com</footer>
+</blockquote>
+
+* A ProjectTemplate directory
+* Order numerically in the order the scripts should be run:
+  - 01-munge.R
+  - 02-Lexis.R
+
+## R | (src, py, cpp, or whatever) **<< Colour per network diagram >>**
+
+* `00-cleaner.R` - read in raw data and save in <em>data</em>
+* `01-main.R` - main script file
+* `99-helper.R` - custom functions to be read in at start of script
+* `data.R` - How you can create a data dictionary in R!
+
+# Communicating Analysis Outcomes | R Markdown
+
+## Reporting | Vignettes **<< Colour per network diagram >>**
+
+* "*A brief evocative description, account, or episode.*" - Google
+* A collection of documents/reports that are related to the project
+* `devtools::build_vignettes()`
+* `browseVignettes("RWorkshop")`
+
+## More Directory Ideas
+
+<div class = "col2">
+
+* Shiny
+* Docker
+* Logs
+* Diagnostics
+* Man/doc
+* Graphs
+* Tests
+* Reports
+* man (automatic)
+* doc (automatic)
+ 
+ </div>
+
+## Markdown
+
+<blockquote class="blockquote">
+  <div class = "large">
+  <p>Markdown is a lightweight mark-up language with plain text formatting syntax that allows it to be converted to many output formats.</p></div>
+  <footer class="blockquote-footer"><https://en.wikipedia.org/wiki/Markdown></footer>
+</blockquote>
+
+<blockquote class="blockquote">
+  <div class = "large">
+  <p>R Markdown documents are fully reproducible. Use a productive notebook interface to weave together narrative text and code to produce elegantly formatted output. Use multiple languages including R, Python, and SQL.</p></div>
+  <footer class="blockquote-footer"><https://rmarkdown.rstudio.com/></footer>
+</blockquote>
+
+```{r, echo = F, out.extra = "figure", out.width = "15%"}
+knitr::include_graphics(file.path("assets", "images", "07_rmarkdown.png"))
+
+```
+
+## Ioslides | What You're Looking At!
+
+## HTML Report
+
+Live demo
+
+# Distributing, Managing and Updating the Collection
+
+## Version Control
+
+<div class = "col2"><p>
+```{r, echo = F, out.extra = "figure", out.width = "75%"}
+knitr::include_graphics(file.path("assets", "images", "07_github_logo.png"))
+
+```
+
+```{r, echo = F, out.extra = "figure", out.width = "75%"}
+knitr::include_graphics(file.path("assets", "images", "07_gitlab.png"))
+
+```
+
+```{r, echo = F, out.extra = "figure", out.width = "75%"}
+knitr::include_graphics(file.path("assets", "images", "07_logos__Bitbucket.png"))
+
+```
+
+```{r, echo = F, out.extra = "figure", out.width = "75%"}
+knitr::include_graphics(file.path("assets", "images", "07_cran.png"))
+
+```
+  
+</p></div>
+
+# Tips
+
+## Coding Tips
+
+* Be consistent:
+  - Values:
+    + "day1" vs "day_1" vs "Day 1"
+    + "5th May 1970" vs "01-05-1970" vs "05/01/1970" vs <mark>1970/05/01</mark>
+  - Variables:
+    + <code>FirstName</code> vs <mark><code>first_name</code></mark>
+    + <code>sex</code> vs <mark><code>female</code></mark>
+* Use variable names that a human can understand
+* Document/comment your code!
+
+## Useful Tools/Packages
+
+* R Studio IDE
+* Tidyverse - data wrangling and visualisation
+* repmis: Miscellaneous Tools for Reproducible Research
+* captioner: Store figure and table captions and print them later
+* devtools
+* Telethon Kids Biometrics package <https://github.com/TelethonKids/biometrics>

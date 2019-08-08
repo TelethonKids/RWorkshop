@@ -35,9 +35,9 @@ All resources for this Introduction to R Worksop are available on GitHub: [https
 
 **Introduction to Data Manipulation**
 
-Download the slides from this link: [https://github.com/TelethonKids/RWorkshop/inst/doc](https://github.com/TelethonKids/RWorkshop/inst/doc)
+Download the slides from this `slides` directory.
 
-Download the Worked example from here:  [https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R](https://github.com/TelethonKids/RWorkshop/R/03_data_manipulation.R)
+Download the Worked example from `/R/02_data_manipulation.R`.
 
 # Session Overview
 
@@ -504,7 +504,7 @@ Data can be joined on multiple columns that can have different names.
 ## The Different Joins
 
 ```{r, echo = F, out.extra = "figure", out.width = "500px"}
-include_graphics("assets/images/joins.png")
+include_graphics("assets/images/02_joins.png")
 
 ```
 
