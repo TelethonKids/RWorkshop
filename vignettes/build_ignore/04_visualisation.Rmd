@@ -1,6 +1,6 @@
 ---
-title: "Introduction to Data Manipulation"
-author: "Paul Stevenson"
+title: "Data Visualisation (static)"
+author: "Matt Cooper"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
   ioslides_presentation:
@@ -21,6 +21,97 @@ library(biometrics)
 library(lubridate)
 library(tidyverse)
 library(kableExtra)
+library(gridExtra)
+library(grid)
+source("04_additional/04_visualisation_helper.R")
+```
+
+# Worked example
+
+## Worked example {.smaller}
+
+```{r echo = T, eval = F}
+dat <- read_csv("/Users/mcooper/Documents/my_proj_git/RWorkshop/data/demo.csv")
+dat2 <- read_csv("/Users/mcooper/Documents/my_proj_git/RWorkshop/data/demo_complications.csv")
+
+theme_set(theme_minimal())
+theme_update(
+  panel.grid.minor = element_blank(),
+  panel.border = element_blank(),
+  axis.line.x = element_line(),
+  axis.line.y = element_line()
+)
+```
+
+## Worked example {.smaller}
+
+```{r echo = T, eval = F}
+dat %>%
+  left_join(dat2) %>%
+  pivot_longer(cols = day1:day3) %>%
+  group_by(id) %>%
+  filter(value < 100) %>%
+  mutate(max = case_when(value == max(value, na.rm = T) ~ 1,
+                         TRUE ~ 0),
+         any_comp = case_when(any(!is.na(complications)) ~ "Yes",
+                              TRUE ~ "No")) %>%
+  ungroup() %>%
+  mutate(sex = as.factor(case_when(male == T ~ "Male",
+                                   TRUE ~ "Female")),
+         name = as.numeric(as.factor(name)),
+         any_comp = as.factor(any_comp)) %>%
+```  
+
+## Worked example {.smaller}
+
+```{r echo = T, eval = F}
+  ggplot(aes(x = name, y = value)) +
+  geom_line(aes(colour = any_comp, group = id), alpha = 0.3) +
+  geom_point(colour = "Red", alpha = 0.7, size = 3,
+             data = . %>% filter(max == 1)) +
+  geom_point(aes(colour = any_comp), alpha = 0.7) +
+  geom_smooth(aes(colour = any_comp), method = lm, 
+              formula = y ~ x, size = 2, se = F) + 
+  facet_wrap( ~ sex + intervention) +
+  scale_color_manual(values=c("#002D88", "#F3AB00")) +
+  scale_x_continuous(breaks = 1:3) +
+  labs(colour = "Any Complication",
+       x = "Time (days)",
+       y = "Value (units)") 
+```
+
+20 lines of code, from data to:
+
+## Worked example 
+
+```{r echo = F, out.width = "105%", fig.align='center', warning = F, message = F}
+dat %>%
+  left_join(dat2) %>%
+  pivot_longer(cols = day1:day3) %>%
+  group_by(id) %>%
+  filter(value < 100) %>%
+  mutate(max = case_when(value == max(value, na.rm = T) ~ 1,
+                         TRUE ~ 0),
+         any_comp = case_when(any(!is.na(complications)) ~ "Yes",
+                              TRUE ~ "No")) %>%
+  ungroup() %>%
+  mutate(sex = as.factor(case_when(male == T ~ "Male",
+                                   TRUE ~ "Female")),
+         name = as.numeric(as.factor(name)),
+         any_comp = as.factor(any_comp)) %>%
+  ggplot(aes(x = name, y = value)) +
+  geom_line(aes(colour = any_comp, group = id), alpha = 0.3) +
+  geom_point(colour = "Red", alpha = 0.7, size = 3,
+             data = . %>% filter(max == 1)) +
+  geom_point(aes(colour = any_comp), alpha = 0.7) +
+  geom_smooth(aes(colour = any_comp), method = lm, 
+              formula = y ~ x, size = 2, se = F) + 
+  facet_wrap( ~ sex + intervention) +
+  scale_color_manual(values=c("#002D88", "#F3AB00")) +
+  scale_x_continuous(breaks = 1:3) +
+  labs(colour = "Any Complication",
+       x = "Time (days)",
+       y = "Value (units)") 
 ```
 
 ## Session resources
@@ -30,282 +121,186 @@ library(kableExtra)
 [Worked example](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
 [Slides](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html)
 
-## Data manipulation (FD 2h) - PS
+# ggplot2
 
-- Overview of base v tidyverse [history/evolution]
-- Read in data 
-- Expand on classes (data/time [lubridate - year], string processing)
-- Summarise/tidy (cleaning)
-- Create columns/conditional create (case_when, if/else)
-- Subset/merge/join
-- Gather/spread/melt/cast/separate/reshape
-- Functions
-- Applying functions (apply/tidyverse)
+## What do you want to plot? (and why)
 
+**Plan your figure!**
 
-# Tidyverse
+What are the key elements of the information your are trying to portray?
 
-## What is the Tidyverse?
+What is their structure/composition?
 
-![https://www.tidyverse.org/](assets/images/tidyverse.PNG)
+## What do you want to plot? (and why)
 
-<blockquote type = "blockquote">The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
-<footer class="blockquote-footer">[https://www.tidyverse.org/](https://www.tidyverse.org/)</footer></blockquote>
+**Plan your figure!**
 
+- What type of data do you have?
 
-Install the complete tidyverse with:
+*continuous, discrete, categorical? one point per person, many?*
 
-    install.packages("tidyverse")
+- Are your data in groups?
 
-## Overview of base v tidyverse [history/evolution]
+*how many levels are within each group? what are the most important grouping variables?*
 
-# Worked example
+- What information are you trying to portray?
 
-## Files
+*group level summary data? data for all individuals? comparison data between groups?*
 
-Data is available from GitHub repository ......
+## The ggplot2 package
 
-## Read in raw data 
+There are many plotting options (base, lattice, plotly etc)
 
-    library(readr)
-    
-    read_csv("/path/to/file.csv", options ...)
+We will focus on ggplot2, as it is (arguably) the most versatile and best suited to producing customised publication (/presentation) ready figures.
 
-## <code>read_csv()</code> options
+## The ggplot2 package
 
-```{r read_csv_options, echo = F}
-tibble(
-  Option = c("col_names", "na", "trim_ws", "skip", "n_max", "guess_max", "skip_empty_rows"),
-  Description = c("If TRUE, the first row of the input will be used as the column names, and will not be included in the data frame.",
-                  "Character vector of strings to interpret as missing values.",
-                  "Should leading and trailing whitespace be trimmed from each field before parsing it?",
-                  "Number of lines to skip before reading data.",
-                  "Maximum number of records to read.",
-                  "Maximum number of records to use for guessing column types.",
-                  "Should blank rows be ignored altogether?")) %>%
-  mutate(Option = paste0("<div style = 'font-size: 0.5em;'><code>", Option, "</code></div>"),
-         Description = paste0("<div style = 'font-size: 0.5em;'>", Description, "</div>")) %>% # add <code> tag to all options
-  kable("html", escape = F) %>%
-  kable_styling("hover", full_width = F)
+Components (terminology) we will cover:
 
+- aesthetics
+- geoms
+- scales
+- themes
+- coordinates
+- facets
+- grids (a little)
+- summary (a little)
+
+## The ggplot2 package - key concept {.smaller}
+
+ggplot2 works in layers (photoshop?):
+
+- from a coding perspective
+- from a visual perspective
+- from a conceptual perspective
+
+```{r, echo = F, out.extra = "figure", out.width = "55%", fig.align='center'}
+knitr::include_graphics(file.path("04_additional/04_layers.png"))
 ```
 
-More help can be found by typing `?read_delim` into the R console.
+## The ggplot2 package - layering {.smaller}
 
-
-## Other ways to read in data
-
-    load("path/to/file.RData")
-    
-    library(readr)
-    read_rds("path/to/file.rds")
-
-    library(readxl)
-    read_xlxs("path/to/file.xlsx")
-
-    library(readstata13)
-    readstata13("path/to/file.sta")
-    
-    Foreign library (SAS, SPSS, ...)
-    
-Data can also be read directly from a database into R!
-
-## Data frame (tibble)
-
-A data frame is a table (or 2 dimensional array-like object) where each column
-stores the data of one variable and each row represents a single record.
-
-These are the properties of a data frame:
-
-* All columns should have a unique name
-* All data in one column will be the same class, however each column can be different
-* Each column should have the same number of data items/rows
-* Rows are not named
-
-Vectors of data are stored in columns:
-
-    c("A", "B", "C", "D")
-
-## Expand on classes (data/time [lubridate - year], string processing)
-
-* Numeric
-* Character
-* Logical
-* Factor
-* Date
-
-* Missing data - NA (there is only one missing data code in R)
-
-# Summarise/tidy (cleaning)
-
-```{r data}
-load("../data/dat.RData")
-
+<div class = "col2 small">
+```{r, echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+dat %>% filter(id %in% c(1,3)) %>%
+  pivot_longer(cols = day1:day3) %>%
+  ggplot(aes(x = name, y = value, group = factor(id))) + theme_minimal(20) + theme(legend.position = "none") +
+  geom_point(aes(colour = factor(id)), size = 9) +
+  geom_line(size = 3)
 ```
 
-```{r str_data}
-str(tki_demo)
-
+```{r, echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+dat %>% filter(id %in% c(1,3)) %>%
+  pivot_longer(cols = day1:day3) %>%
+  ggplot(aes(x = name, y = value, group = factor(id))) + theme_minimal(20) + theme(legend.position = "none") +
+  geom_line(size = 3) +
+  geom_point(aes(colour = factor(id)), size = 9) 
 ```
 
-## Data summary - high level descriptives
+</div>
 
-```{r summary_data}
-summary(tki_demo)
 
+## Shape your data
+
+Almost always need it to be long
+
+
+
+## Geoms
+
+Basics
+
+## Layers
+
+The broad concept of
+
+
+
+
+## Themes and tweaks
+
+- grid lines
+- colours
+- 
+
+## Incorporation stats
+
+- 
+
+## Export options
+
+ggsave() - last figure
+
+pdf() dev.off()
+
+
+## Common hacks
+
+- two figures side by side
+
+## Aligning the axis  {.smaller}
+
+<code>
+gA <- ggplotGrob(a)  
+gB <- ggplotGrob(b)  
+maxWidth = grid::unit.pmax(gA\$widths[2:5], gB\$widths[2:5])  
+gA\$widths[2:5] <- as.list(maxWidth)  
+gB\$widths[2:5] <- as.list(maxWidth)  
+p <- grid.arrange(gA, gB, ncol=1)
+</code> 
+
+## Aligning the axis - bad example
+
+```{r, echo = F, out.extra = "figure", out.width = "60%", fig.align='center'}
+knitr::include_graphics(file.path("04_additional/04_align_un_fig.png"))
 ```
 
-## Looking at the data
+## Aligning the axis - good example
 
-```{r head_data}
-head(tki_demo)
-
+```{r, echo = F, out.extra = "figure", out.width = "60%", fig.align='center'}
+knitr::include_graphics(file.path("04_additional/04_align_fig.png"))
 ```
 
-## Create columns/conditional create (if/else)
+## Shared legends {.smaller}
 
-New column can be created with `mutate()`
-
-```{r ifelse}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>% as.duration() %>% as.numeric("years") %>% round(1),
-         teenager = ifelse(age >= 13, T, F)) %>%
-  select(id, dob, age, teenager) %>%
-  head()
-
-```
-
-## <code>case_when()</code>
-
-```{r case_when, eval = F}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%
-           as.duration() %>%
-           as.numeric("years") %>%
-           round(1),
-         age_category = case_when(
-           age < 12 ~ "Younger than 12 years",
-           age < 14 ~ "12 - 13 years",
-           age < 16 ~ "14 - 15 years",
-           age < 18 ~ "15 - 17 years",
-           T ~ "Older than 18 years"
-         ),
-         factor(age_category,
-                levels = c("Younger than 12 years","12 - 13 years",
-                           "14 - 15 years", "15 - 17 years",
-                           "Older than 18 years"))) %>%
-  select(id, dob, age, age_category) %>%
-  head()
-
-```
-
-## <code>case_when()</code>
-
-```{r case_when_output, echo = F}
-tki_demo %>%
-  mutate(age = interval(dob, Sys.Date()) %>%
-           as.duration() %>%
-           as.numeric("years") %>%
-           round(1),
-         age_category = case_when(
-           age < 12 ~ "Younger than 12 years",
-           age < 14 ~ "12 - 13 years",
-           age < 16 ~ "14 - 15 years",
-           age < 18 ~ "15 - 17 years",
-           T ~ "Older than 18 years"
-         ),
-         factor(age_category,
-                levels = c("Younger than 12 years","12 - 13 years",
-                           "14 - 15 years", "15 - 17 years",
-                           "Older than 18 years"))) %>%
-  select(id, dob, age, age_category) %>%
-  head()
-
-```
-
-## Parsing dates with <code>lubridate</code>
-
-* Run some examples - adding day if YYYYMM data provided
-* Converting char to date
-* example with date and time
-
-# Subset/merge/join
-
-## needs fixing
-
-So far all the tools you’ve learned have worked with complete data frames. If you want to pull out a single variable, you need some new tools, $ and [[. [[ can extract by name or position; $ only extracts by name but is a little less typing.
-
-df <- tibble(
-  x = runif(5),
-  y = rnorm(5)
-)
-
-## Extract by name
-df$x
-
-df[["x"]]
-
-
-## Extract by position
-df[[1]]
-
-To use these in a pipe, you’ll need to use the special placeholder .:
-
-df %>% .$x
-
-df %>% .[["x"]]
-
-# Gather/spread/melt/cast/separate/reshape
-
-## Long/wide
-
-Gather/spread
-
-## Functions
-
-Don't repeat yourself (DRY)
-
-Use a function to replace frequently used code
-* Call on the function many times
-* automate a function over a list with the <code>apply()</code> family of functions
-
-```{r funciton}
-square <- function(x) {
-  x^2
+```{r eval = F}
+grid_arrange_shared_legend <- function(..., ncol = length(list(...)), nrow = 1, position = c("bottom", "right")) {  
+  plots <- list(...)  
+  position <- match.arg(position)  
+  g <- ggplotGrob(plots[[1]] + theme(legend.position = position))$grobs  
+...  
+...  
+  grid.newpage()  
+  grid.draw(combined)  
+  # return gtable invisibly  
+  invisible(combined)  
 }
-
-square(4)
-
 ```
 
-## Applying functions (apply/tidyverse)
+## Shared legends - example {.smaller}
 
-```{r, eval = F}
-day1_mean <- function(x) {
-  tibble(id = x$id,
-         day1_mean = mean(x$day1, na.rm = T)
-  )
-}
-
-tki_demo %>%
-  split(.$id) %>%
-  lapply(day1_mean) %>%
-  bind_rows()
-
+```{r echo = T, fig.height = 4, fig.width = 9, warning  = F, message = F}
+grid_arrange_shared_legend(p_sl_1, p_sl_2, ncol = 2)
 ```
 
-## Applying functions (apply/tidyverse)
 
-```{r, echo = F}
-day1_mean <- function(x) {
-  tibble(id = x$id,
-         day1_mean = mean(x$day1, na.rm = T)
-  )
-}
 
-tki_demo %>%
-  split(.$id) %>%
-  lapply(day1_mean) %>%
-  bind_rows()
+## Finding help
 
-```
+- stackoverflow (beware, out of date advice)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
