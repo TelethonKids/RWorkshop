@@ -131,6 +131,8 @@ What are the key elements of the information your are trying to portray?
 
 What is their structure/composition?
 
+Sketch a draft on paper?
+
 ## What do you want to plot? (and why)
 
 **Plan your figure!**
@@ -147,6 +149,18 @@ What is their structure/composition?
 
 *group level summary data? data for all individuals? comparison data between groups?*
 
+## What do you want to plot? (and why)
+
+Think about the finishing touches:
+
+- Colour/line-type differentiation?
+- A legend?
+- Tick mark frequency? Breaks? (5,10,15 etc)
+- Labels (verbose, units)
+- Scale? (will outliers distort your plans)
+- Error bars?
+- Text/values/annotations within the figure?
+
 ## The ggplot2 package
 
 There are many plotting options (base, lattice, plotly etc)
@@ -154,6 +168,18 @@ There are many plotting options (base, lattice, plotly etc)
 We will focus on ggplot2, as it is (arguably) the most versatile and best suited to producing customised publication (/presentation) ready figures.
 
 ## The ggplot2 package
+
+<code>ggplot2</code> is based on the grammar of graphics, the
+idea that you can build every graph from the same
+few components: a data set, a set of geoms—visual
+marks that represent data points, and a coordinate
+system
+
+## The ggplot2 package
+
+
+
+
 
 Components (terminology) we will cover:
 
@@ -165,6 +191,20 @@ Components (terminology) we will cover:
 - facets
 - grids (a little)
 - summary (a little)
+
+## The ggplot2 package - support
+
+Main resource: [ggplot2 website](https://ggplot2.tidyverse.org/reference/)
+
+- easy to navigate 
+- has lots of visual examples
+- best source of accurate (contemporary) information/examples
+
+## The ggplot2 package - support
+
+```{r, echo = F, out.extra = "figure", out.width = "100%", fig.align='center'}
+knitr::include_graphics(file.path("04_additional/04_ggplot2_site.png"))
+```
 
 ## The ggplot2 package - key concept {.smaller}
 
@@ -199,20 +239,151 @@ dat %>% filter(id %in% c(1,3)) %>%
 
 </div>
 
+## Shape your data
+
+(should this be the first or last section?)
+
+Your data almost always need it to be long format.
+
+You may need to become familiar with <code>pivot_longer</code> from the <code>tidyr</code> package.
+
+**Think! If you want to do something with a variable in your plot, it needs to be a column in your dataset**
 
 ## Shape your data
 
-Almost always need it to be long
+
+## Basics of using ggplot2
+
+Code will be in three parts, all joined with a <code>+</code> at the end.
+
+<code>
+ggplot(...) +     [Part 1 - call to ggplot2]
+  geom_1(...) +   [Part 2 - select and customise the objects to appear on the plot ]
+  geom_2(...) +
+  stat_(...) +
+  scale_(...) +   [Part 3 - tweak your plot]
+  theme(...)
+</code>
+
+## Using ggplot2 | Aesthetics 
+
+Aesthetics are where you link variables in your data to the building blocks of your plot.
+
+<code>aes(x = age, y = height, colour = sex, group = ethnicity) </code>
+
+- Typically, these are defined in Part 1, the <code>ggplot</code> call. 
+  + If so, they will cascade through to all other layers.
+- You can set these invidiually within each <code>geom_</code> call
+
+## Using ggplot2 | Part 1 - the ggplot command
+
+Not too much to know.
+
+- First argument will be your dataset (works nicely when piping <code>%>%</code>commands together)
+- Then you set aesthestics if you wish
+
+<code>ggplot(my_data, aes(x = calendar_year, y = mortality_rate))</code>
+
+## Using ggplot2 | Part 2 - The geoms
+
+This is where you choose what visual marks will represent your data.
 
 
 
-## Geoms
+## Using ggplot2 | Part 3 - Tweaking your plot, basics
 
-Basics
+Lets set up a plot to tweak.
 
-## Layers
+```{r echo = T}
+p <- dat %>% filter(dob > "2000-01-01") %>% ggplot() +
+  theme_grey(base_size = 18)
+```
 
-The broad concept of
+## Using ggplot2 | Part 3 - Tweaking your plot, basics
+
+Tidying up the labels for your axis/title.
+
+```{r echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1)) +
+  labs(x = "Date of birth", y = expression(HbA[1*c]*"(%)"))
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot, basics
+
+Changing the visible area
+
+```{r echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1)) +
+  coord_cartesian(ylim = c(4,8), expand = T) # default
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot, basics
+
+Changing the scale of the axis
+
+```{r echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1)) +
+  scale_x_date(date_breaks = "1 year") # yuck
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot, basics
+
+Changing the scale of the axis
+
+```{r echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1)) +
+  scale_x_date(date_breaks = "1 year", date_labels = "%Y") # I fixed it
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot {.smaller}
+
+Changing the colour scheme - palettes
+
+```{r echo = T, out.extra = "figure", out.width = "500px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1, colour = intervention)) 
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot
+
+Changing the colour scheme - palettes
+
+```{r echo = T, out.extra = "figure", out.width = "500px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1, colour = intervention)) +
+  scale_color_brewer(palette = "Set1") 
+```
+
+- Note, fill (inside) vs colour (outside)
+
+## Using ggplot2 | Part 3 - Tweaking your plot
+
+Changing the colour scheme - custom
+
+```{r echo = T, out.extra = "figure", out.width = "400px", fig.align='center'}
+p + geom_point(aes(x = dob, y = day1, colour = male)) +
+  scale_color_manual(values=c("#002D88", "#F3AB00"))
+```
+
+## Using ggplot2 | Part 3 - Tweaking your plot {.smaller}
+
+Note, fill (inside) vs colour (outside)
+
+```{r echo = T, out.extra = "figure", out.width = "500px", fig.align='center'}
+p + geom_violin(aes(x = male, y = day1, colour = intervention, fill = intervention)) +
+  scale_color_brewer(palette = "Set2") +
+  scale_fill_brewer(palette = "Blues") 
+```
+
+
+
+## Incorporation stats
+
+ 
+
+## Incorporation stats | line of best fit
+
+
+
+
 
 
 
