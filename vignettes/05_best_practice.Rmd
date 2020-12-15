@@ -1,5 +1,5 @@
 ---
-title: "Introduction to Data Manipulation"
+title: "How to Get More Out of R"
 author: "Paul Stevenson"
 date: "`r format(Sys.time(), '%d %B %Y')`"
 output:
@@ -10,7 +10,7 @@ output:
     widescreen: true
     incremental: true
 vignette: >
-  %\VignetteIndexEntry{Introduction to Data Manipulation}
+  %\VignetteIndexEntry{How to Get More Out of R}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
   
@@ -30,32 +30,70 @@ library(kableExtra)
 [Worked example](https://github.com/TelethonKids/RWorkshop/tree/master/R/03_data_manipulation)
 [Slides](https://github.com/TelethonKids/RWorkshop/tree/master/inst/doc/reproducable-research.html)
 
-## Data manipulation (FD 2h) - PS
+## How to Get More Out of R (FD 2h) - PS
 
-- Overview of base v tidyverse [history/evolution]
-- Read in data 
-- Expand on classes (data/time [lubridate - year], string processing)
-- Summarise/tidy (cleaning)
-- Create columns/conditional create (case_when, if/else)
-- Subset/merge/join
-- Gather/spread/melt/cast/separate/reshape
-- Functions
-- Applying functions (apply/tidyverse)
+- Style Guide
+- Mapping functions over data
+- Multi-core processing
+- R Markdown
 
+# Style Guide
 
-# Tidyverse
+## Why Bother?
 
-## What is the Tidyverse?
+<blockquote class="blockquote">
+    Good coding style is like correct punctuation: you can manage without it, butitsuremakesthingseasiertoread.
+    <footer class="blockquote-footer">Hadley Wickham in <cite title="Source Title">The tidyverse style guide</cite></footer>
+</blockquote>
 
-![https://www.tidyverse.org/](assets/images/tidyverse.PNG)
+- Well structured and documented code makes it easier for you to find possible mistakes
+- It will give your script some structure and a logical flow
+- Do your future self a favour!
 
-<blockquote type = "blockquote">The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.
-<footer class="blockquote-footer">[https://www.tidyverse.org/](https://www.tidyverse.org/)</footer></blockquote>
+## Object Names
 
+- Name your variables in a human friendly way
+    * e.g. `24_week_blood_pressure` vs. `bp24w`
+- snake_case vs CamelCase
+    * Be consistent in whatever you choose
+    * My preference is snake_case
+    * all lower caps with words separated by an underscore "_"
 
-Install the complete tidyverse with:
+## Comments
 
-    install.packages("tidyverse")
+- You don't need to comment every line of code
+- Place a comment for each "block" of code describing it's purpose
+- Single line comments are created with a "#"
+
+```{r}
+# This is commented code
+
+```
+
+```{r}
+#' R Studio will automatically follow a line starting with "#'" with a new comment
+
+```
+
+- If the comment ends with four "-" or "#" then the following code is collapsable
+
+```{r}
+# Example ----
+
+```
+
+# Mapping functions over data
+
+- `?map`
+- Functions can be applied to data on a row-by-row basis with the `purrr` function
+    * `map` - 
+    * `pmap` - 
+    * `map2` - 
+- Map functions always return a list, these can be changed to return vectors of objects with the same type
+    * `map_lgl()`, `map_int()`, `map_dbl()` and `map_chr()`
+- `map_dfr()` and `map_dfc()` return data frames created by row-binding and column-binding, respectively
+- These can be easily modified to run over multiple processor cords with the `furrr` function
+
 
 ## Overview of base v tidyverse [history/evolution]
 
