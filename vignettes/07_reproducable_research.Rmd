@@ -79,7 +79,7 @@ Consider adding directories/files marked with an asterisk to .gitIgnore
 ## Data Directories | **<< Colour per network diagram >>**
 
 ```{r, echo = F, out.extra = "figure", out.width = "50%"}
-knitr::include_graphics(file.path("assets", "images", "07_Slide3.JPG"))
+knitr::include_graphics(file.path("assets", "images", "07_network.JPG"))
 
 ```
 

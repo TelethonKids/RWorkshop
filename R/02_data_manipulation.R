@@ -219,8 +219,8 @@ tmp <- tki_demo %>%
   pivot_longer(cols = starts_with("day"), # i.e. c("day1", "day2", "day3")
                names_to = "day",
                values_to = "score",
-               names_prefix = "day", # regular expression to remove matching text
-               names_ptypes = list(day = integer()))
+               names_prefix = "day") %>% 
+  mutate(day = as.numeric(day))
 
 # Long to wide
 

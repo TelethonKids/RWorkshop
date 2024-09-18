@@ -657,9 +657,8 @@ tmp <- tki_demo %>%
   pivot_longer(cols = starts_with("day"),
                names_to = "day",
                values_to = "score",
-               names_prefix = "day",
-               names_ptypes = list(day = integer()))
-
+               names_prefix = "day") %>% 
+  mutate(day = as.numeric(day))
 ```
 
 * `starts_with()` will select c("day1", "day2", "day3")
